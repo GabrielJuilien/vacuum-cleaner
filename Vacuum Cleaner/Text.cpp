@@ -21,11 +21,11 @@ Text::Text(std::string p_text, SDL_Renderer* p_renderer, int p_fontSize, int x_p
 
 	if (p_text.length()) {
 		m_text = p_text;
-		TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 32);
+		TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
 		if (!trebuchet) throw TTF_GetError();
-		SDL_Surface* textSurface = 
+		SDL_Surface* textSurface = TTF_RenderText_Solid(trebuchet, m_text.c_str(), );
 
-		TTF_CloseFont(trebuchet);
+		
 	}
 }
 

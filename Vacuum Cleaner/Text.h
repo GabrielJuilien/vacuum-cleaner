@@ -12,6 +12,7 @@ private:
 	eFontStyle m_fontStyle;
 	eFontRender m_fontRender;
 	int m_fontSize;
+	SDL_Color m_fontColor;
 	SDL_Texture* m_textTexture;
 	SDL_Rect* m_destination;
 
