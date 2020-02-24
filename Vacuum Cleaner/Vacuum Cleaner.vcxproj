@@ -165,10 +165,12 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="GraphNode.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="GraphNode.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
