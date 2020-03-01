@@ -173,6 +173,10 @@
     <ClInclude Include="Text.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\draw_rectangle.png" />
+    <Image Include="res\remove rectangle.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

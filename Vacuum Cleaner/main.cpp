@@ -41,10 +41,8 @@ int main(int argc, char** argv)
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-
-
 	//Main loop
-	while (!SDL_QUIT) {
+	while (1) {
 
 	}
 

@@ -42,4 +42,12 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\draw_rectangle.png">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+    <Image Include="res\remove rectangle.png">
+      <Filter>Fichiers de ressources</Filter>
+    </Image>
+  </ItemGroup>
 </Project>
