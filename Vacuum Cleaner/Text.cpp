@@ -433,7 +433,7 @@ void Text::render(int x_parentPos, int y_parentPos) {
 
 	SDL_Rect tmp_dest;
 	tmp_dest.x = x_parentPos + m_destination.x;
-	tmp_dest.y = x_parentPos + m_destination.y;
+	tmp_dest.y = y_parentPos + m_destination.y;
 	tmp_dest.w = m_destination.w;
 	tmp_dest.h = m_destination.h;
 

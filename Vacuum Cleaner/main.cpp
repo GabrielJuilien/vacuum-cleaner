@@ -18,6 +18,9 @@ int main(int argc, char** argv)
 	int x_mousePos = 0, y_mousePos = 0;
 	int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
+	Button* AddRectangleButton = NULL;
+	Button* RmvRectangleButton = NULL;
+
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
 		if (SDL_Init(SDL_INIT_VIDEO) != 0)
@@ -44,8 +47,15 @@ int main(int argc, char** argv)
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-	Button* AddRectangleButton = new Button(renderer, "ressources/draw_rectangle.png", "Draw rectangle", { 128, 0, 0, 0 }, 24, { 0, 0, 0, 0 }, { 104, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 0, 300, 100 }, NULL);
-
+	try {
+		AddRectangleButton = new Button(renderer, "ressources/draw_rectangle.png", "Draw rectangle", { 0, 150, 0, 0 }, 24, { 0, 0, 0, 0 }, { 104, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 0, 300, 100 }, NULL);
+		RmvRectangleButton = new Button(renderer, "ressources/erase_rectangle.png", "Erase rectangle", { 200, 0, 0, 0 }, 24, { 0, 0, 0, 0 }, { 104, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 100, 300, 100 }, NULL);
+	}
+	catch (const char* exception) {
+		std::cerr << exception << std::endl;
+		return EXIT_FAILURE;
+	}
+	
 	//Main loop
 	while (1) {
 		SDL_GetMouseState(&x_mousePos, &y_mousePos);
@@ -56,15 +66,19 @@ int main(int argc, char** argv)
 			}
 		}
 
-		SDL_RenderClear(renderer);
-		AddRectangleButton->render();
-
 		currentFrame = SDL_GetTicks();
+
+		//Render loop
 		while (currentFrame - lastFrame > 1000 / FRAMERATE) {
+
+			SDL_RenderClear(renderer);
+			AddRectangleButton->render();
+			RmvRectangleButton->render();
 			SDL_RenderPresent(renderer);
 			lastFrame += 1000 / FRAMERATE;
 		}
 		
+		//Idle wait
 		std::this_thread::sleep_for(std::chrono::milliseconds(20));
 	}
 
