@@ -27,6 +27,9 @@
     <ClCompile Include="Text.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Image.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphNode.h">
@@ -41,13 +44,21 @@
     <ClInclude Include="Text.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="Image.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\draw_rectangle.png">
+    <Image Include="ressources\draw_rectangle.png">
       <Filter>Fichiers de ressources</Filter>
     </Image>
-    <Image Include="res\remove rectangle.png">
+    <Image Include="ressources\remove rectangle.png">
       <Filter>Fichiers de ressources</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ressources\trebuc.ttf">
+      <Filter>Fichiers de ressources</Filter>
+    </Font>
   </ItemGroup>
 </Project>

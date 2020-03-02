@@ -7,7 +7,7 @@ Text::Text() {
 	m_fontColor = { 0, 0, 0, 0};
 	m_fontSize = 12;
 	m_textTexture = NULL;
-	m_destination = NULL;
+	m_destination = { 0 };
 }
 
 //Constructors
@@ -20,13 +20,13 @@ Text::Text(std::string p_text, SDL_Renderer* p_renderer, SDL_Color p_fontColor, 
 	m_fontColor = p_fontColor;
 	m_fontSize = p_fontSize;
 
-	m_destination = new SDL_Rect();
-	m_destination->x = x_pos;
-	m_destination->y = y_pos;
+	m_destination = { 0 };
+	m_destination.x = x_pos;
+	m_destination.y = y_pos;
 
 	m_text = p_text;
 	if (m_text.length()) {
-		TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
+		TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", 16);
 		if (!trebuchet) throw TTF_GetError();
 
 		SDL_Surface* textSurface = TTF_RenderText_Solid(trebuchet, m_text.c_str(), m_fontColor);
@@ -45,6 +45,16 @@ Text::Text(std::string p_text, SDL_Renderer* p_renderer, SDL_Color p_fontColor, 
 		TTF_CloseFont(trebuchet);
 		SDL_FreeSurface(textSurface);
 	}
+	else {
+		SDL_DestroyTexture(m_textTexture);
+		m_textTexture = NULL;
+	}
+
+	int w, h;
+	SDL_QueryTexture(m_textTexture, NULL, NULL, &w, &h);
+	m_destination.w = w;
+	m_destination.h = h;
+
 }
 
 Text::Text(std::string p_text, SDL_Renderer* p_renderer, int p_fontStyle, eFontRender p_fontRender, SDL_Color p_fontColor, int p_fontSize, int x_pos, int y_pos) {
@@ -56,13 +66,13 @@ Text::Text(std::string p_text, SDL_Renderer* p_renderer, int p_fontStyle, eFontR
 	m_fontColor = p_fontColor;
 	m_fontSize = p_fontSize;
 
-	m_destination = new SDL_Rect();
-	m_destination->x = x_pos;
-	m_destination->y = y_pos;
+	m_destination = { 0 };
+	m_destination.x = x_pos;
+	m_destination.y = y_pos;
 
 	m_text = p_text;
 	if (m_text.length()) {
-		TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
+		TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", m_fontSize);
 		if (!trebuchet) throw TTF_GetError();
 		TTF_SetFontStyle(trebuchet, m_fontStyle);
 		
@@ -93,6 +103,15 @@ Text::Text(std::string p_text, SDL_Renderer* p_renderer, int p_fontStyle, eFontR
 		TTF_CloseFont(trebuchet);
 		SDL_FreeSurface(textSurface);
 	}
+	else {
+		SDL_DestroyTexture(m_textTexture);
+		m_textTexture = NULL;
+	}
+
+	int w, h;
+	SDL_QueryTexture(m_textTexture, NULL, NULL, &w, &h);
+	m_destination.w = w;
+	m_destination.h = h;
 }
 
 //Setters
@@ -100,7 +119,7 @@ void Text::text(std::string p_text) {
 	if (m_text != p_text) {
 		m_text = p_text;
 		if (m_text.length()) {
-			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
+			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", m_fontSize);
 			if (!trebuchet) throw TTF_GetError();
 			TTF_SetFontStyle(trebuchet, m_fontStyle);
 
@@ -131,6 +150,15 @@ void Text::text(std::string p_text) {
 			TTF_CloseFont(trebuchet);
 			SDL_FreeSurface(textSurface);
 		}
+		else {
+			SDL_DestroyTexture(m_textTexture);
+			m_textTexture = NULL;
+		}
+
+		int w, h;
+		SDL_QueryTexture(m_textTexture, NULL, NULL, &w, &h);
+		m_destination.w = w;
+		m_destination.h = h;
 	}
 }
 
@@ -145,7 +173,7 @@ void Text::fontStyle(int p_fontStyle) {
 	if (m_fontStyle != p_fontStyle) {
 		m_fontStyle = p_fontStyle;
 		if (m_text.length()) {
-			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
+			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", m_fontSize);
 			if (!trebuchet) throw TTF_GetError();
 			TTF_SetFontStyle(trebuchet, m_fontStyle);
 
@@ -176,6 +204,15 @@ void Text::fontStyle(int p_fontStyle) {
 			TTF_CloseFont(trebuchet);
 			SDL_FreeSurface(textSurface);
 		}
+		else {
+			SDL_DestroyTexture(m_textTexture);
+			m_textTexture = NULL;
+		}
+
+		int w, h;
+		SDL_QueryTexture(m_textTexture, NULL, NULL, &w, &h);
+		m_destination.w = w;
+		m_destination.h = h;
 	}
 }
 
@@ -183,7 +220,7 @@ void Text::fontRender(eFontRender p_fontRender) {
 	if (p_fontRender != m_fontRender) {
 		m_fontRender = p_fontRender;
 		if (m_text.length()) {
-			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
+			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", m_fontSize);
 			if (!trebuchet) throw TTF_GetError();
 			TTF_SetFontStyle(trebuchet, m_fontStyle);
 
@@ -214,6 +251,15 @@ void Text::fontRender(eFontRender p_fontRender) {
 			TTF_CloseFont(trebuchet);
 			SDL_FreeSurface(textSurface);
 		}
+		else {
+			SDL_DestroyTexture(m_textTexture);
+			m_textTexture = NULL;
+		}
+
+		int w, h;
+		SDL_QueryTexture(m_textTexture, NULL, NULL, &w, &h);
+		m_destination.w = w;
+		m_destination.h = h;
 	}
 }
 
@@ -221,7 +267,7 @@ void Text::fontColor(SDL_Color p_fontColor) {
 	if (m_fontColor.a != p_fontColor.a && m_fontColor.b != p_fontColor.b && m_fontColor.g != p_fontColor.g && m_fontColor.r != p_fontColor.r) {
 		m_fontColor = p_fontColor;
 		if (m_text.length()) {
-			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
+			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", m_fontSize);
 			if (!trebuchet) throw TTF_GetError();
 			TTF_SetFontStyle(trebuchet, m_fontStyle);
 
@@ -252,6 +298,15 @@ void Text::fontColor(SDL_Color p_fontColor) {
 			TTF_CloseFont(trebuchet);
 			SDL_FreeSurface(textSurface);
 		}
+		else {
+			SDL_DestroyTexture(m_textTexture);
+			m_textTexture = NULL;
+		}
+
+		int w, h;
+		SDL_QueryTexture(m_textTexture, NULL, NULL, &w, &h);
+		m_destination.w = w;
+		m_destination.h = h;
 	}
 }
 
@@ -259,7 +314,7 @@ void Text::fontSize(int p_fontSize) {
 	if (m_fontSize != p_fontSize) {
 		m_fontSize = p_fontSize;
 		if (m_text.length()) {
-			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuch.ttf", 16);
+			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", m_fontSize);
 			if (!trebuchet) throw TTF_GetError();
 			TTF_SetFontStyle(trebuchet, m_fontStyle);
 
@@ -290,16 +345,25 @@ void Text::fontSize(int p_fontSize) {
 			TTF_CloseFont(trebuchet);
 			SDL_FreeSurface(textSurface);
 		}
+		else {
+			SDL_DestroyTexture(m_textTexture);
+			m_textTexture = NULL;
+		}
+
+		int w, h;
+		SDL_QueryTexture(m_textTexture, NULL, NULL, &w, &h);
+		m_destination.w = w;
+		m_destination.h = h;
 	}
 }
 
-void Text::destination(SDL_Rect* p_destination) {
+void Text::destination(SDL_Rect p_destination) {
 	m_destination = p_destination;
 }
 
 void Text::destination(int x_pos, int y_pos) {
-	m_destination->x = x_pos;
-	m_destination->y = y_pos;
+	m_destination.x = x_pos;
+	m_destination.y = y_pos;
 }
 
 
@@ -332,18 +396,16 @@ SDL_Texture* Text::textTexture(void) {
 	return m_textTexture;
 }
 
-SDL_Rect* Text::destination(void) {
+SDL_Rect Text::destination(void) {
 	return m_destination;
 }
 
 int Text::x_pos(void) {
-	if (m_destination) return m_destination->x;
-	else throw "Destination is NULL.\n";
+	return m_destination.x;
 }
 
 int Text::y_pos(void) {
-	if (m_destination) return m_destination->y;
-	else throw "Destination is NULL.\n";
+	return m_destination.y;
 }
 
 int Text::x_size(void) {
@@ -364,11 +426,24 @@ int Text::y_size(void) {
 	return 0;
 }
 
+
+//Display management
+void Text::render(int x_parentPos, int y_parentPos) {
+	if (!m_textTexture) return;
+
+	SDL_Rect tmp_dest;
+	tmp_dest.x = x_parentPos + m_destination.x;
+	tmp_dest.y = x_parentPos + m_destination.y;
+	tmp_dest.w = m_destination.w;
+	tmp_dest.h = m_destination.h;
+
+	SDL_RenderCopy(m_renderer, m_textTexture, NULL, &tmp_dest);
+}
+
+
 //Destroyers
 Text::~Text() {
 	m_renderer = NULL;
 	SDL_DestroyTexture(m_textTexture);
 	m_textTexture = NULL;
-	delete m_destination;
-	m_destination = NULL;
 }

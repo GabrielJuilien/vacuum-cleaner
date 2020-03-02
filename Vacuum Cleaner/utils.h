@@ -6,3 +6,7 @@
 
 #include <cstdio>
 #include <iostream>
+#include <chrono>
+#include <thread>
+
+#define FRAMERATE 30

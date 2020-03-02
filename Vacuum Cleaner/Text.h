@@ -9,12 +9,14 @@ class Text {
 private:
 	std::string m_text;
 	SDL_Renderer* m_renderer;
+
 	int m_fontStyle;
 	eFontRender m_fontRender;
 	SDL_Color m_fontColor;
 	int m_fontSize;
+
 	SDL_Texture* m_textTexture;
-	SDL_Rect* m_destination;
+	SDL_Rect m_destination;
 
 	//Default constructor
 	Text();
@@ -30,7 +32,7 @@ public:
 	void fontRender(eFontRender p_fontRender);
 	void fontColor(SDL_Color p_fontColor);
 	void fontSize(int p_fontSize);
-	void destination(SDL_Rect* p_destination);
+	void destination(SDL_Rect p_destination);
 	void destination(int x_pos, int y_pos);
 
 	//Getters
@@ -41,11 +43,14 @@ public:
 	SDL_Color fontColor(void);
 	int fontSize(void);
 	SDL_Texture* textTexture(void);
-	SDL_Rect* destination(void);
+	SDL_Rect destination(void);
 	int x_pos(void);
 	int y_pos(void);
 	int x_size(void);
 	int y_size(void);
+
+	//Display management
+	void render(int x_parentPos, int y_parentPos);
 
 	//Destroyers
 	~Text();

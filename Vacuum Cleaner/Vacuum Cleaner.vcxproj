@@ -96,7 +96,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>xcopy /f ../librairies/SDL2-2.0.6/bin/Win32/ $(outdir)</Command>
@@ -113,7 +113,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>xcopy /f ..\librairies\SDL2-2.0.6\bin\x64\ $(outdir)</Command>
@@ -134,7 +134,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>xcopy /f ../librairies/SDL2-2.0.6/bin/Win32/ $(outdir)</Command>
@@ -155,7 +155,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>xcopy /f ..\librairies\SDL2-2.0.6\bin\x64\ $(outdir)</Command>
@@ -164,18 +164,23 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="GraphNode.cpp" />
+    <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="GraphNode.h" />
+    <ClInclude Include="Image.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\draw_rectangle.png" />
-    <Image Include="res\remove rectangle.png" />
+    <Image Include="ressources\draw_rectangle.png" />
+    <Image Include="ressources\remove rectangle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="ressources\trebuc.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
