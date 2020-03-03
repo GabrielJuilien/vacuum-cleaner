@@ -27,7 +27,7 @@ DrawingNode::DrawingNode(int p_width, int p_height, int p_abscissa, int p_ordina
 }
 
 DrawingNode::DrawingNode(int p_width, int p_height, int p_abscissa, int p_ordinate, NodeState p_state, DrawingNode* p_top, DrawingNode* p_lft, DrawingNode* p_bot, DrawingNode* p_rgt){
-	m_width = p_width
+	m_width = p_width;
 }
 
 DrawingNode::DrawingNode(int p_width, int p_height, NodeState p_state, DrawingNode* p_top, DrawingNode* p_lft, DrawingNode* p_bot, DrawingNode* p_rgt){ }
@@ -44,15 +44,33 @@ void DrawingNode::bot(DrawingNode* p_bot){ }
 void vrgt(DrawingNode* p_rgt){ }
 
 //Getters
-int DrawingNode::width(){ }
-int DrawingNode::height(){ }
-int DrawingNode::abscissa(){ }
-int DrawingNode::ordinate(){ }
-NodeState DrawingNode::state(){ }
-DrawingNode* DrawingNode::top(){ }
-DrawingNode* DrawingNode::lft(){ }
-DrawingNode* DrawingNode::bot(){ }
-DrawingNode* DrawingNode::rgt(){ }
+int DrawingNode::width(){
+	return m_width;
+}
+int DrawingNode::height(){
+	return m_height;
+}
+int DrawingNode::abscissa(){
+	return m_abscissa;
+}
+int DrawingNode::ordinate(){
+	return m_ordinate;
+}
+NodeState DrawingNode::state(){
+	return m_state;
+}
+DrawingNode* DrawingNode::top(){
+	return m_top;
+}
+DrawingNode* DrawingNode::lft(){
+	return m_lft;
+}
+DrawingNode* DrawingNode::bot(){
+	return m_bot;
+}
+DrawingNode* DrawingNode::rgt(){
+	return m_rgt;
+}
 
 //Destroyers
 DrawingNode::~DrawingNode(){ }
