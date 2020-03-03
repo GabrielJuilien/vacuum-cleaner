@@ -166,13 +166,17 @@
     <ClCompile Include="GraphNode.cpp" />
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Drawing.cpp" />
+    <ClCompile Include="Tools.cpp" />
     <ClCompile Include="Text.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="Drawing.h" />
     <ClInclude Include="GraphNode.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="Tools.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
