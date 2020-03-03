@@ -27,46 +27,10 @@ DrawingNode::DrawingNode(int p_width, int p_height, int p_abscissa, int p_ordina
 }
 
 DrawingNode::DrawingNode(int p_width, int p_height, int p_abscissa, int p_ordinate, NodeState p_state, DrawingNode* p_top, DrawingNode* p_lft, DrawingNode* p_bot, DrawingNode* p_rgt){
-	m_width = p_width;
-	m_height = p_height;
-	m_abscissa = p_abscissa;
-	m_ordinate = p_ordinate;
-	m_state = p_state;
-	m_top = p_top;
-	m_lft = p_lft;
-	m_bot = p_bot;
-	m_rgt = p_rgt;
+	m_width = p_width
 }
 
-DrawingNode::DrawingNode(int p_width, int p_height, NodeState p_state, DrawingNode* p_top, DrawingNode* p_lft, DrawingNode* p_bot, DrawingNode* p_rgt){
-	m_width = p_width;
-	m_height = p_height;
-	m_state = p_state;
-	m_top = p_top;
-	m_lft = p_lft;
-	m_bot = p_bot;
-	m_rgt = p_rgt;
-
-	if (m_top == NULL && m_bot == NULL) {
-		m_ordinate = 0;
-	}
-	else if (m_top == NULL) {
-		m_ordinate = m_bot->ordinate() - m_height;
-	}
-	else {
-		m_abscissa = m_top->ordinate() + m_height;
-	}
-	
-	if (m_lft == NULL && m_rgt == NULL) {
-		m_abscissa = 0;
-	}
-	else if (m_lft == NULL) {
-		m_abscissa = m_rgt->abscissa() - m_width;
-	}
-	else {
-		m_abscissa = m_lft->abscissa() + m_width;
-	}
-}
+DrawingNode::DrawingNode(int p_width, int p_height, NodeState p_state, DrawingNode* p_top, DrawingNode* p_lft, DrawingNode* p_bot, DrawingNode* p_rgt){ }
 
 //Setters
 void DrawingNode::width(int p_width){ }
