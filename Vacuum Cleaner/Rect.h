@@ -1,16 +1,19 @@
 #pragma once
 #include "utils.h"
 
+
+
 class Rect {
 private:
 	int m_x, m_y;
 	int m_w, m_h;
+	bool m_draw;
 
 	//Default constructor
 	Rect();
 public:
 	//Constructors
-	Rect(int p_x, int p_y, int p_w, int p_h);
+	Rect(int p_x, int p_y, int p_w, int p_h, bool p_draw);
 
 	//Setters
 	void origin(SDL_Point p);
@@ -23,6 +26,7 @@ public:
 	//Getters
 	SDL_Point origin();
 	SDL_Point target();
+	bool draw();
 	int x();
 	int y();
 	int w();

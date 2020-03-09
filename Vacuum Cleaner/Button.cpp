@@ -14,7 +14,10 @@ Button::Button(SDL_Renderer* p_renderer, std::string p_iconPath, std::string p_t
 	m_renderer = p_renderer;
 
 	try {
-		m_icon = new Image(m_renderer, p_iconPath, p_iconDestination.x, p_iconDestination.y);
+		if (!p_iconPath.empty())
+			m_icon = new Image(m_renderer, p_iconPath, p_iconDestination.x, p_iconDestination.y);
+		else
+			m_icon = NULL;
 	}
 	catch (const char* exception) {
 		throw exception;
@@ -99,8 +102,8 @@ void Button::render() {
 	SDL_SetRenderDrawColor(m_renderer, m_background.r, m_background.g, m_background.b, m_background.a);
 	SDL_RenderFillRect(m_renderer, &m_destination);
 	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 0);
-	m_text->render(m_destination.x, m_destination.y);
-	m_icon->render(m_destination.x, m_destination.y);
+	if (m_text) m_text->render(m_destination.x, m_destination.y);
+	if (m_icon) m_icon->render(m_destination.x, m_destination.y);
 }
 
 

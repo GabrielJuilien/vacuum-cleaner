@@ -5,13 +5,15 @@ Rect::Rect() {
 	m_y = 0;
 	m_w = 0;
 	m_h = 0;
+	m_draw = true;
 }
 
-Rect::Rect(int p_x, int p_y, int p_w, int p_h) {
+Rect::Rect(int p_x, int p_y, int p_w, int p_h, bool p_draw) {
 	m_x = p_x;
 	m_y = p_y;
 	m_w = p_w;
 	m_h = p_h;
+	m_draw = p_draw;
 }
 
 void Rect::origin(SDL_Point p) {
@@ -69,6 +71,10 @@ SDL_Point Rect::target() {
 	return { m_x + m_w, m_h + m_y };
 }
 
+bool Rect::draw() {
+	return m_draw;
+}
+
 int Rect::x() {
 	return m_x;
 }
@@ -89,7 +95,7 @@ int Rect::h() {
 //Display management
 void Rect::render(SDL_Renderer* p_renderer, SDL_Color p_color) {
 	SDL_Rect tmp = { m_x, m_y, m_w, m_h };
-	SDL_SetRenderDrawColor(p_renderer, p_color.r, p_color.g, p_color.b, p_color.a);
+	if(m_draw) SDL_SetRenderDrawColor(p_renderer, p_color.r, p_color.g, p_color.b, p_color.a);
 	SDL_RenderFillRect(p_renderer, &tmp);
 	SDL_SetRenderDrawColor(p_renderer, 255, 255, 255, 0);
 }

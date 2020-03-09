@@ -118,6 +118,7 @@ Text::Text(std::string p_text, SDL_Renderer* p_renderer, int p_fontStyle, eFontR
 void Text::text(std::string p_text) {
 	if (m_text != p_text) {
 		m_text = p_text;
+		SDL_DestroyTexture(m_textTexture);
 		if (m_text.length()) {
 			TTF_Font* trebuchet = TTF_OpenFont("ressources/trebuc.ttf", m_fontSize);
 			if (!trebuchet) throw TTF_GetError();
