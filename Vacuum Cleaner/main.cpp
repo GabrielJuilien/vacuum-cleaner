@@ -114,6 +114,7 @@ int main(int argc, char** argv)
 							s_b.append("m"); 
 							drawingTextY->text(s_b);
 						}
+						break;
 					case SDL_MOUSEBUTTONDOWN:
 						if (e.button.button == SDL_BUTTON_RIGHT) {
 							if (!AddRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool)) {
@@ -297,7 +298,6 @@ int main(int argc, char** argv)
 				}
 				break;
 			}
-
 		}
 
 		currentFrame = SDL_GetTicks();
