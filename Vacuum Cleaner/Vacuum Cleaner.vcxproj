@@ -167,6 +167,7 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Drawing.cpp" />
+    <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Tools.cpp" />
     <ClCompile Include="Text.cpp" />
   </ItemGroup>
@@ -175,6 +176,7 @@
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="GraphNode.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="utils.h" />

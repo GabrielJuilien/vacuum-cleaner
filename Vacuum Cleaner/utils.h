@@ -8,5 +8,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <vector>
 
 #define FRAMERATE 30
+#define PX_SIZE 2 //Real size of a pixel, in centimeters

@@ -2,7 +2,7 @@
 #include "utils.h"
 #include <vector>
 
-enum class NodeState { BLANK, FLOOR, WALL, FURNITURE };
+enum class NodeState { BLANK, FLOOR, FURNITURE };
 
 class DrawingNode {
 private:
