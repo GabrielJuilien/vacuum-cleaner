@@ -63,7 +63,7 @@ int main(int argc, char** argv)
 
 	//Main loop
 	while (currentStep != Step::QUIT) {
-		handler()
+		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, FillButton);
 	}
 
 	SDL_DestroyRenderer(renderer);
