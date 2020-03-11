@@ -91,12 +91,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\librairies\SDL2-2.0.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\librairies\VLD\include;..\librairies\SDL2-2.0.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;..\librairies\VLD\lib\Win32\vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>xcopy /f ../librairies/SDL2-2.0.6/bin/Win32/ $(outdir)</Command>
@@ -108,12 +108,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\librairies\SDL2-2.0.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\librairies\VLD\include;..\librairies\SDL2-2.0.6\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2main.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_ttf.lib;..\librairies\SDL2-2.0.6\lib\$(platform)\SDL2_image.lib;..\librairies\VLD\lib\Win64\vld.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <CustomBuildStep>
       <Command>xcopy /f ..\librairies\SDL2-2.0.6\bin\x64\ $(outdir)</Command>
