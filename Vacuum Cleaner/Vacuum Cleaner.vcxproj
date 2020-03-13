@@ -168,8 +168,10 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="Scale.cpp" />
     <ClCompile Include="Tools.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="View.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
@@ -177,9 +179,11 @@
     <ClInclude Include="GraphNode.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="Scale.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Tools.h" />
     <ClInclude Include="utils.h" />
+    <ClInclude Include="View.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="ressources\draw_rectangle.png" />

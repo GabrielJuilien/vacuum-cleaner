@@ -33,8 +33,8 @@ public:
 	int h();
 
 	//Display management
-	void render(SDL_Renderer* p_renderer, SDL_Color p_color);
+	virtual void render(SDL_Renderer* p_renderer, SDL_Color p_color);
 
 	//Destroyer
-	~Rect();
+	virtual ~Rect();
 };

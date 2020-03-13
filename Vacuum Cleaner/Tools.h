@@ -1,7 +1,7 @@
 #pragma once
 #include "Button.h"
-#include "Rect.h"
 #include "Text.h"
+#include "View.h"
 
 enum class Tool {
 	NONE,

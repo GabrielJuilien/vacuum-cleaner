@@ -17,3 +17,5 @@
 
 #define FRAMERATE 30
 #define PX_SIZE 2  //Real size of a pixel, in centimeters
+#define ZOOM_MIN 1
+#define ZOOM_MAX 5

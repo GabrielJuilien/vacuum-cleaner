@@ -23,7 +23,7 @@ int switchToolToNone(void* input) {
 
 void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
 
-	int a, b, c, d;
+	int a, b;
 	std::string s_a, s_b;
 
 	static SDL_Event e;
@@ -36,6 +36,8 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	static Rect* drawingBuffer = NULL;
 	static Text* drawingTextX = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
 	static Text* drawingTextY = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
+
+	static Scale* testScale = new Scale({ 280, 0 }, { 1000, 20 }, 0, 20, 1, Orientation::HORIZONTAL);
 
 	SDL_GetMouseState(&x_mousePos, &y_mousePos);
 
@@ -387,7 +389,8 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	}
 }
 
-void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std::vector<Rect*>* drawing, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
+void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std::vector<Rect*>* drawing, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
+	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
 	currentFrame = SDL_GetTicks();
 
