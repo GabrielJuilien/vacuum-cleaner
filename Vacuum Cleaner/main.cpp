@@ -1,4 +1,6 @@
 
+
+#define _CRTDBG_MAP_ALLOC
 #include "utils.h"
 #include "Button.h"
 #include "Tools.h"
@@ -66,11 +68,19 @@ int main(int argc, char** argv)
 		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, FillButton);
 	}
 
+	delete AddRectangleButton;
+	AddRectangleButton = NULL;
+	delete RmvRectangleButton;
+	RmvRectangleButton = NULL;
+	delete FillButton;
+	FillButton = NULL;
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	TTF_Quit();
 	SDL_Quit();
 
+	_CrtDumpMemoryLeaks();
 	system("pause");
 	return EXIT_SUCCESS;
 }

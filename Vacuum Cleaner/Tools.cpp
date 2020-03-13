@@ -194,20 +194,6 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 					}
 					break;
 				case SDL_QUIT:
-					delete AddRectangleButton;
-					AddRectangleButton = NULL;
-					delete RmvRectangleButton;
-					RmvRectangleButton = NULL;
-					delete FillButton;
-					FillButton = NULL;
-					delete drawing;
-					drawing = NULL;
-					if (drawingBuffer) delete drawingBuffer;
-					drawingBuffer = NULL;
-					delete drawingTextX;
-					drawingTextX = NULL;
-					delete drawingTextY;
-					drawingTextY = NULL;
 					*currentStep = Step::QUIT;
 					break;
 				}
@@ -362,20 +348,6 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 					}
 					break;
 				case SDL_QUIT:
-					delete AddRectangleButton;
-					AddRectangleButton = NULL;
-					delete RmvRectangleButton;
-					RmvRectangleButton = NULL;
-					delete FillButton;
-					FillButton = NULL;
-					delete drawing;
-					drawing = NULL;
-					if (drawingBuffer) delete drawingBuffer;
-					drawingBuffer = NULL;
-					delete drawingTextX;
-					drawingTextX = NULL;
-					delete drawingTextY;
-					drawingTextY = NULL;
 					*currentStep = Step::QUIT;
 					break;
 				}
@@ -388,20 +360,6 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 					RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool);
 					break;
 				case SDL_QUIT:
-					delete AddRectangleButton;
-					AddRectangleButton = NULL;
-					delete RmvRectangleButton;
-					RmvRectangleButton = NULL;
-					delete FillButton;
-					FillButton = NULL;
-					delete drawing;
-					drawing = NULL;
-					if (drawingBuffer) delete drawingBuffer;
-					drawingBuffer = NULL;
-					delete drawingTextX;
-					drawingTextX = NULL;
-					delete drawingTextY;
-					drawingTextY = NULL;
 					*currentStep = Step::QUIT;
 					break;
 				}
@@ -411,12 +369,25 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		}
 	}
 
-	render(p_renderer, *currentStep, drawingBuffer, drawing, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, FillButton);
+	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, drawing, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, FillButton);
+	else {
+		while (drawing->size()) {
+			delete drawing->at(0);
+			drawing->erase(drawing->begin());
+		}
+		delete drawing;
+		drawing = NULL;
+		if (drawingBuffer) delete drawingBuffer;
+		drawingBuffer = NULL;
+		delete drawingTextX;
+		drawingTextX = NULL;
+		delete drawingTextY;
+		drawingTextY = NULL;
+		delete currentTool;
+	}
 }
 
 void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std::vector<Rect*>* drawing, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
-	
-	if (currentStep == Step::QUIT) return;
 
 	currentFrame = SDL_GetTicks();
 
