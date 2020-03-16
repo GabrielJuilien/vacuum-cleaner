@@ -372,14 +372,10 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		}
 	}
 
-	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, drawing, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, FillButton);
+	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, view, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, FillButton);
 	else {
-		while (drawing->size()) {
-			delete drawing->at(0);
-			drawing->erase(drawing->begin());
-		}
-		delete drawing;
-		drawing = NULL;
+		delete view;
+		view = NULL;
 		if (drawingBuffer) delete drawingBuffer;
 		drawingBuffer = NULL;
 		delete drawingTextX;
@@ -391,7 +387,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	}
 }
 
-void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std::vector<Rect*>* drawing, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
+void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, View* view, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
 	currentFrame = SDL_GetTicks();
@@ -402,14 +398,7 @@ void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std
 		if (AddRectangleButton) AddRectangleButton->render();
 		if (RmvRectangleButton) RmvRectangleButton->render();
 		if (FillButton) FillButton->render();
-		if (drawing) {
-			for (int i = 0; i < drawing->size(); i++) {
-				if (drawing->at(i)->draw())
-					drawing->at(i)->render(p_renderer, { 100, 100, 255, 0 });
-				else
-					drawing->at(i)->render(p_renderer, { 255, 255, 255, 0 });
-			}
-		}
+		if (view) view->render(p_renderer, 260, 0);
 		if (drawingBuffer) drawingBuffer->render(p_renderer, { 150, 150, 220, 100 });
 		if (drawingTextX) drawingTextX->render(0, 0);
 		if (drawingTextY) drawingTextY->render(0, 0);
