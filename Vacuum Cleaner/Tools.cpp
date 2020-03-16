@@ -21,7 +21,14 @@ int switchToolToNone(void* input) {
 	return 0;
 }
 
-void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
+int switchToolToCGraph(void* input) {
+	Tool* currentTool = static_cast<Tool*>(input);
+	*currentTool = Tool::CGRAPH;
+	std::cout << "Switched tool to NONE mode.\n";
+	return 0;
+}
+
+void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
 
 	int a, b;
 	std::string s_a, s_b;
@@ -397,6 +404,7 @@ void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, Vie
 		SDL_RenderClear(p_renderer);
 		if (AddRectangleButton) AddRectangleButton->render();
 		if (RmvRectangleButton) RmvRectangleButton->render();
+		if (GraphRectangleButton) GraphRectangleButton->render();
 		if (FillButton) FillButton->render();
 		if (view) view->render(p_renderer, 260, 0);
 		if (drawingBuffer) drawingBuffer->render(p_renderer, { 150, 150, 220, 100 });
