@@ -55,15 +55,12 @@ Orientation Scale::orientation() {
 
 //Render management
 void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
-	dynamic_cast<Rect*>(this)->render(p_renderer, { 200, 200, 200, 0 });
-	
 
 	SDL_SetRenderDrawColor(p_renderer, 0, 0, 0, 0);
 	if (m_orientation == Orientation::HORIZONTAL) {
 		SDL_RenderDrawLine(p_renderer, x(), y() + h() - 1, x() + w(), y() + h() - 1);
 	}
 	else {
-
 		SDL_RenderDrawLine(p_renderer, x() + w() - 1, y(), x() + w() - 1, y() + h());
 	}
 

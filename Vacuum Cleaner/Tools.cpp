@@ -32,14 +32,15 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 
 	static Tool* currentTool = new Tool(Tool::NONE);
 
-	static std::vector<Rect*>* drawing = new std::vector<Rect*>();
+	static View* view = new View({ 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
+
+	static std::vector<Rect*>* drawing = view->drawing();
 	static Rect* drawingBuffer = NULL;
 	static Text* drawingTextX = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
 	static Text* drawingTextY = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
 
-	static Scale* testScale = new Scale({ 280, 0 }, { 1000, 20 }, 0, 20, 1, Orientation::HORIZONTAL);
-
 	SDL_GetMouseState(&x_mousePos, &y_mousePos);
+
 
 	while (SDL_PollEvent(&e)) {
 		switch (*currentStep) {
@@ -386,6 +387,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		delete drawingTextY;
 		drawingTextY = NULL;
 		delete currentTool;
+		currentTool = NULL;
 	}
 }
 

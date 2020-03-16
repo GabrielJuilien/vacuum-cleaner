@@ -79,6 +79,7 @@ StyleCopReport.xml
 *.pidb
 *.svclog
 *.scc
+*.idb
 
 # Chutzpah Test files
 _Chutzpah*
@@ -330,3 +331,6 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# VLD log files
+*.tlog

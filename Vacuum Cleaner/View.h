@@ -11,13 +11,23 @@ private:
 
 	float m_zoom;
 	SDL_Point m_viewCenter;
-	std::vector<Rect*>* drawing;
+	std::vector<Rect*>* m_drawing;
 
 	//Constructors
 	View();
 public:
-	View(Rect m_xScale, Rect m_yScale, Rect m_viewer);
+	View(Rect p_xScale, Rect p_yScale, Rect p_viewer);
 
+	//Setters
+	
+
+	//Getters
+	Scale* xScale();
+	Scale* yScale();
+	Rect* viewer();
+	float zoom();
+	SDL_Point viewCenter();
+	std::vector<Rect*>* drawing();
 
 	//Display management
 	void render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos);
