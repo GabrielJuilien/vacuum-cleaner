@@ -379,7 +379,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		}
 	}
 
-	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, view, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, FillButton);
+	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, view, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
 	else {
 		delete view;
 		view = NULL;
@@ -394,7 +394,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	}
 }
 
-void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, View* view, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
+void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, View* view, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
 	currentFrame = SDL_GetTicks();
