@@ -21,7 +21,14 @@ int switchToolToNone(void* input) {
 	return 0;
 }
 
-void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
+int switchToolToCGraph(void* input) {
+	Tool* currentTool = static_cast<Tool*>(input);
+	*currentTool = Tool::CGRAPH;
+	std::cout << "Switched tool to NONE mode.\n";
+	return 0;
+}
+
+void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
 
 	int a, b;
 	std::string s_a, s_b;
@@ -371,7 +378,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		}
 	}
 
-	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, drawing, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, FillButton);
+	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, drawing, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
 	else {
 		while (drawing->size()) {
 			delete drawing->at(0);
@@ -389,7 +396,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	}
 }
 
-void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std::vector<Rect*>* drawing, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* FillButton) {
+void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std::vector<Rect*>* drawing, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
 	currentFrame = SDL_GetTicks();
@@ -399,6 +406,7 @@ void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, std
 		SDL_RenderClear(p_renderer);
 		if (AddRectangleButton) AddRectangleButton->render();
 		if (RmvRectangleButton) RmvRectangleButton->render();
+		if (GraphRectangleButton) GraphRectangleButton->render();
 		if (FillButton) FillButton->render();
 		if (drawing) {
 			for (int i = 0; i < drawing->size(); i++) {

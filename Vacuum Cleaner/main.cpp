@@ -16,6 +16,7 @@ int main(int argc, char** argv)
 
 	Button* AddRectangleButton = NULL;
 	Button* RmvRectangleButton = NULL;
+	Button* GraphRectangleButton = NULL;
 	Button* FillButton = NULL;
 
 	int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();	
@@ -52,7 +53,8 @@ int main(int argc, char** argv)
 	try {
 		AddRectangleButton = new Button(renderer, "ressources/draw_rectangle.png", "Draw rectangle", { 0, 150, 0, 0 }, 24, { 0, 0, 0, 0 }, { 104, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 0, 280, 100 }, switchToolToDraw);
 		RmvRectangleButton = new Button(renderer, "ressources/erase_rectangle.png", "Erase rectangle", { 200, 0, 0, 0 }, 24, { 0, 0, 0, 0 }, { 104, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 100, 280, 100 }, switchToolToErase);
-		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 200, 280, 520 }, switchToolToNone);	
+		GraphRectangleButton = new Button(renderer, "", "Create Graph", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 104, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 280, 100 }, switchToolToCGraph);
+		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 300, 280, 420 }, switchToolToNone);
 	}
 	catch (const char* exception) {
 		std::cerr << exception << std::endl;
@@ -65,13 +67,15 @@ int main(int argc, char** argv)
 
 	//Main loop
 	while (currentStep != Step::QUIT) {
-		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, FillButton);
+		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
 	}
 
 	delete AddRectangleButton;
 	AddRectangleButton = NULL;
 	delete RmvRectangleButton;
 	RmvRectangleButton = NULL;
+	delete GraphRectangleButton;
+	GraphRectangleButton = NULL;
 	delete FillButton;
 	FillButton = NULL;
 
