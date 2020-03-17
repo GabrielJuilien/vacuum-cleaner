@@ -39,7 +39,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 
 	static Tool* currentTool = new Tool(Tool::NONE);
 
-	static View* view = new View({ 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
+	static View* view = new View(p_renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
 
 	static std::vector<Rect*>* drawing = view->drawing();
 	static Rect* drawingBuffer = NULL;

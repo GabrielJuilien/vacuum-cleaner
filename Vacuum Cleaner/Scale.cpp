@@ -2,28 +2,39 @@
 
 //Constructors
 Scale::Scale() : Rect(0, 0, 0, 0, false) {
-	m_beginvalue = 0;
+	m_beginValue = 0;
 	m_endValue = 0;
 	m_step = 0;
 	m_orientation = Orientation::HORIZONTAL;
+	m_digits = NULL;
+	m_digitsPosition = NULL;
 }
 
 
-Scale::Scale(SDL_Point p_pos, SDL_Point p_size, float p_beginValue, float p_endValue, float p_step, Orientation p_orientation) : Rect(p_pos.x, p_pos.y, p_size.x, p_size.y, false) {
-	m_beginvalue = p_beginValue;
+Scale::Scale(SDL_Renderer* p_renderer, SDL_Point p_pos, SDL_Point p_size, float p_beginValue, float p_endValue, float p_step, Orientation p_orientation) : Rect(p_pos.x, p_pos.y, p_size.x, p_size.y, false) {
+	m_beginValue = p_beginValue;
 	m_endValue = p_endValue;
 	m_step = p_step;
 	m_orientation = p_orientation;
+	m_digits = new std::vector<SDL_Texture*>();
+	m_digits->clear();
+	m_digitsPosition = new std::vector<SDL_Rect>();
+	m_digitsPosition->clear();
 }
 
 
 //Setters
 void Scale::beginValue(float p_beginValue) {
-	m_beginvalue = (p_beginValue < 0) ? 0 : p_beginValue;
+	m_beginValue = (p_beginValue < 0) ? 0 : p_beginValue;
+}
+
+void Scale::values(float p_beginValue, float p_endValue) {
+	m_beginValue = (p_beginValue < 0) ? 0 : p_beginValue;
+	m_endValue = (p_endValue > m_beginValue) ? p_endValue : m_beginValue + 0.01f;
 }
 
 void Scale::endValue(float p_endValue) {
-	m_endValue = (p_endValue > m_beginvalue) ? p_endValue : m_beginvalue + 0.01f;
+	m_endValue = (p_endValue > m_beginValue) ? p_endValue : m_beginValue + 0.01f;
 }
 
 void Scale::step(float p_step) {
@@ -37,7 +48,7 @@ void Scale::orientation(Orientation p_orientation) {
 
 //Getters
 float Scale::beginValue() {
-	return m_beginvalue;
+	return m_beginValue;
 }
 
 float Scale::endValue() {
@@ -54,7 +65,7 @@ Orientation Scale::orientation() {
 
 
 //Render management
-void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
+void Scale::generateTextures(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
 	float i;
 	int texture_w, texture_h;
 	float buffer = 0;
@@ -63,51 +74,108 @@ void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos)
 	SDL_Surface* surface = NULL;
 	SDL_Texture* texture = NULL;
 
-	SDL_SetRenderDrawColor(p_renderer, 0, 0, 0, 0);
+	//Creating new textures and rectangles
+
 	if (m_orientation == Orientation::HORIZONTAL) {
-		SDL_RenderDrawLine(p_renderer, x() + p_xParentPos, y() + h() + p_yParentPos, x() + w() + p_xParentPos, y() + h() + p_yParentPos);
-
-		for (i = m_beginvalue; i < m_endValue; i += (m_endValue - m_beginvalue) / (float)w()) {
-			buffer += (m_endValue - m_beginvalue) / (float)w();
-
-			if (buffer >= m_step) {
-				SDL_RenderDrawLine(p_renderer, x() + p_xParentPos + i / ((m_endValue - m_beginvalue) / w()) + h(), y() + p_yParentPos + h() - 6, x() + p_xParentPos + i * w() / (m_endValue - m_beginvalue) + h(), y() + p_yParentPos + h());
-				buffer = (m_endValue - m_beginvalue) / (float)w();		
+		for (i = m_beginValue; i < m_endValue; i += (m_endValue - m_beginValue) / (w() - h())) {
+			buffer += (m_endValue - m_beginValue) / (w() - h());
+			if (buffer > m_step) {
+				buffer -= m_step;
 				textBuffer = (textBuffer + 1) % 4;
 				if (textBuffer == 0) {
-					surface = TTF_RenderText_Solid(trebuchet, std::to_string((int)floor(i)).c_str(), { 0, 0, 0, 0 });
+					surface = TTF_RenderText_Solid(trebuchet, std::to_string((int)ceil(i)).c_str(), { 0, 0, 0, 0 });
 					texture = SDL_CreateTextureFromSurface(p_renderer, surface);
 					SDL_QueryTexture(texture, NULL, NULL, &texture_w, &texture_h);
 
-					SDL_Rect tmp1 = { 0, 0, texture_w, texture_h };
-					SDL_Rect tmp2 = { x() + p_xParentPos + i / ((m_endValue - m_beginvalue) / w()) + h() - texture_w / 2,  y() + p_yParentPos + 1, texture_w, texture_h };
+					SDL_Rect tmp = { (float)(x() + p_xParentPos) + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h() - texture_w / 2,  y() + p_yParentPos - 1, texture_w, texture_h };
 
-					SDL_RenderCopy(p_renderer, texture, &tmp1, &tmp2);
-
+					m_digits->push_back(texture);
+					m_digitsPosition->push_back(tmp);
 					SDL_FreeSurface(surface);
-					SDL_DestroyTexture(texture);
 				}
 			}
 		}
 	}
 	else {
-		SDL_RenderDrawLine(p_renderer, x() + w() + p_xParentPos, y() + p_yParentPos, x() + w() + p_xParentPos, y() + h() + p_yParentPos);
-		for (i = m_beginvalue; i < m_endValue; i += (m_endValue - m_beginvalue) / h()) {
+		for (i = m_beginValue; i < m_endValue; i += (m_endValue - m_beginValue) / (h() - w())) {
+			buffer += (m_endValue - m_beginValue) / (h() - w());
 			if (buffer > m_step) {
-				SDL_RenderDrawLine(p_renderer, x() + p_xParentPos + w() - 10, y() + p_yParentPos + i * h() / (m_endValue - m_beginvalue) + w(), x() + p_xParentPos + w(), y() + p_yParentPos + i * h() / (m_endValue - m_beginvalue) + w());
+				buffer -= m_step;
+				textBuffer = (textBuffer + 1) % 4;
+				if (textBuffer == 0) {
+					surface = TTF_RenderText_Solid(trebuchet, std::to_string((int)ceil(i)).c_str(), { 0, 0, 0, 0 });
+					texture = SDL_CreateTextureFromSurface(p_renderer, surface);
+					SDL_QueryTexture(texture, NULL, NULL, &texture_w, &texture_h);
+
+					SDL_Rect tmp = { x() + p_xParentPos - 1, (float)(y() + p_yParentPos) + (i - m_beginValue) * (h() - w()) / (m_endValue - m_beginValue) + w() - texture_h / 2, texture_w, texture_h };
+
+					m_digits->push_back(texture);
+					m_digitsPosition->push_back(tmp);
+					SDL_FreeSurface(surface);
+				}
+			}
+		}
+	}
+
+	TTF_CloseFont(trebuchet);
+}
+
+void Scale::deleteTextures() {
+	//Delete previous textures and rectangles
+	for (int i = 0; i < m_digits->size(); i++) {
+		SDL_DestroyTexture(m_digits->at(i));
+	}
+	delete m_digits;
+
+	delete m_digitsPosition;
+}
+
+void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
+	float i;
+	int j;
+	float buffer = 0;
+	SDL_Rect tmp;
+	SDL_Point center;
+
+	SDL_SetRenderDrawColor(p_renderer, 0, 0, 0, 0);
+	if (m_orientation == Orientation::HORIZONTAL) {
+		SDL_RenderDrawLine(p_renderer, x() + p_xParentPos, y() + h() + p_yParentPos, x() + w() + p_xParentPos, y() + h() + p_yParentPos);
+		for (i = m_beginValue; i < m_endValue; i += (m_endValue - m_beginValue) / (w() - h())) {
+			if (buffer >= m_step) {
+				SDL_RenderDrawLine(p_renderer, (float)(x() + p_xParentPos) + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h(), y() + p_yParentPos + h() - 6, x() + p_xParentPos + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h(), y() + p_yParentPos + h());
 				buffer = 0;
 			}
-			else buffer += (m_endValue - m_beginvalue) / h();
+			buffer += (m_endValue - m_beginValue) / (w() - h());
 		}
+
+	}
+	else {
+		SDL_RenderDrawLine(p_renderer, x() + w() + p_xParentPos, y() + p_yParentPos, x() + w() + p_xParentPos, y() + h() + p_yParentPos);
+		for (i = m_beginValue; i < m_endValue; i += (m_endValue - m_beginValue) / (h() - w())) {
+			if (buffer >= m_step) {
+				SDL_RenderDrawLine(p_renderer, x() + p_xParentPos + w() - 6, (float)(y() + p_yParentPos) + (i - m_beginValue) * (h() - w()) / (m_endValue - m_beginValue) + w(), x() + p_xParentPos + w(), y() + p_yParentPos + (i - m_beginValue) * (h() - w()) / (m_endValue - m_beginValue) + w());
+				buffer -= m_step;
+			}
+			buffer += (m_endValue - m_beginValue) / (h() - w());
+		}
+	}
+
+
+	if (m_digits->empty()) generateTextures(p_renderer, p_xParentPos, p_yParentPos);
+	
+	for (j = 0; j < m_digits->size(); j++) {
+		tmp = { 0, 0, m_digitsPosition->at(j).w, m_digitsPosition->at(j).h };
+		center = { tmp.x + tmp.w / 2, tmp.y + tmp.h / 2 };
+		if (m_orientation == Orientation::HORIZONTAL) SDL_RenderCopy(p_renderer, m_digits->at(j), &tmp, &(m_digitsPosition->at(j)));
+		else SDL_RenderCopyEx(p_renderer, m_digits->at(j), &tmp, &(m_digitsPosition->at(j)), 270, &center, SDL_FLIP_NONE);
 	}
 
 	SDL_SetRenderDrawColor(p_renderer, 255, 255, 255, 0);
 
-	TTF_CloseFont(trebuchet);
 }
 
 
 //Destroyer
 Scale::~Scale() {
-
+	this->deleteTextures();
 }

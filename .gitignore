@@ -336,3 +336,5 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/x64/Debug/Vacuum Cleaner.lib
+/x64/Debug/Vacuum Cleaner.exp

@@ -16,7 +16,7 @@ private:
 	//Constructors
 	View();
 public:
-	View(Rect p_xScale, Rect p_yScale, Rect p_viewer);
+	View(SDL_Renderer* p_renderer, Rect p_xScale, Rect p_yScale, Rect p_viewer);
 
 	//Setters
 	

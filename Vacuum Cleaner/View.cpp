@@ -12,9 +12,9 @@ View::View() : Rect(0, 0, 0, 0, false) {
 	m_drawing = NULL;
 }
 
-View::View(Rect p_xScale, Rect p_yScale, Rect p_viewer) : Rect(p_yScale.x(), p_xScale.y(), p_viewer.w() + p_yScale.w(), p_viewer.h() + p_xScale.h(), false) {
-	m_xScale = new Scale({ p_xScale.x(), p_xScale.y() }, { p_xScale.w(), p_xScale.h() }, 0, 1000 * PX_SIZE, 50, Orientation::HORIZONTAL);
-	m_yScale = new Scale({ p_yScale.x(), p_yScale.y() }, { p_yScale.w(), p_yScale.h() }, 0, 720 * PX_SIZE, 50, Orientation::VERTICAL);
+View::View(SDL_Renderer* p_renderer, Rect p_xScale, Rect p_yScale, Rect p_viewer) : Rect(p_yScale.x(), p_xScale.y(), p_viewer.w() + p_yScale.w(), p_viewer.h() + p_xScale.h(), false) {
+	m_xScale = new Scale(p_renderer, { p_xScale.x(), p_xScale.y() }, { p_xScale.w(), p_xScale.h() }, 0, 1000 * PX_SIZE, 50, Orientation::HORIZONTAL);
+	m_yScale = new Scale(p_renderer, { p_yScale.x(), p_yScale.y() }, { p_yScale.w(), p_yScale.h() }, 0, 700 * PX_SIZE, 50, Orientation::VERTICAL);
 	m_viewer = new Rect(p_viewer);
 
 	m_zoom = ZOOM_MIN;
@@ -70,8 +70,8 @@ View::~View() {
 	delete m_xScale;
 	delete m_yScale;
 	delete m_viewer;
-	while (m_drawing->size() > 0) {
-		delete m_drawing->at(0);
-		m_drawing->erase(m_drawing->begin());
+	for (int i = 0; i < m_drawing->size(); i++) {
+		delete m_drawing->at(i);
 	}
+	delete m_drawing;
 }
