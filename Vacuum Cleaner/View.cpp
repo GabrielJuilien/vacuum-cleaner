@@ -4,12 +4,15 @@
 View::View() : Rect(0, 0, 0, 0, false) {
 	m_xScale = NULL;
 	m_yScale = NULL;
-
 	m_viewer = NULL;
-	m_zoom = 0;
 
+	m_zoom = 0;
 	m_viewCenter = { 0, 0 };
+	
 	m_drawing = NULL;
+	m_drawingBuffer = NULL;
+	m_drawingTextX = NULL;
+	m_drawingTextY = NULL;
 }
 
 View::View(SDL_Renderer* p_renderer, Rect p_xScale, Rect p_yScale, Rect p_viewer) : Rect(p_yScale.x(), p_xScale.y(), p_viewer.w() + p_yScale.w(), p_viewer.h() + p_xScale.h(), false) {
@@ -26,6 +29,9 @@ View::View(SDL_Renderer* p_renderer, Rect p_xScale, Rect p_yScale, Rect p_viewer
 
 	//Initializing an empty drawing
 	m_drawing = new std::vector<Rect*>();
+	m_drawingBuffer = NULL;
+	m_drawingTextX = new Text("", p_renderer, { 0, 0, 0, 0 }, 14, 0, 0);
+	m_drawingTextY = new Text("", p_renderer, { 0, 0, 0, 0 }, 14, 0, 0);
 }
 
 //Setters
@@ -85,6 +91,39 @@ void View::zoom(float p_step, int p_xMousePos, int p_yMousePos) {
 }
 
 
+void View::setBufferOrigin(int p_xPosition, int p_yPosition, bool p_drawing, int p_xParentPos, int p_yParentPos) {
+	m_drawingBuffer = new Rect(0, 0, 0, 0, p_drawing);
+
+	float relativeXPosition = ((float)(p_xPosition - p_xParentPos) * PX_SIZE - (float)m_viewCenter.x) / m_zoom + (float)m_viewCenter.x;
+	float relativeYPosition = ((float)(p_yPosition - p_yParentPos) * PX_SIZE - (float)m_viewCenter.y) / m_zoom + (float)m_viewCenter.y;
+	m_drawingBuffer->x(relativeXPosition);
+	m_drawingBuffer->y(relativeYPosition);
+}
+
+void View::setBufferTarget(int p_xPosition, int p_yPosition, int p_xParentPos, int p_yParentPos) {
+	float relativeXPosition = ((float)(p_xPosition - p_xParentPos) * PX_SIZE - (float)m_viewCenter.x) / m_zoom + (float)m_viewCenter.x;
+	float relativeYPosition = ((float)(p_yPosition - p_yParentPos) * PX_SIZE - (float)m_viewCenter.y) / m_zoom + (float)m_viewCenter.y;
+	m_drawingBuffer->w(relativeXPosition - m_drawingBuffer->x());
+	m_drawingBuffer->h(relativeYPosition - m_drawingBuffer->y());
+}
+
+void View::discardBuffer() {
+	if (m_drawingBuffer) {
+		delete m_drawingBuffer;
+		m_drawingBuffer = NULL;
+	}
+	m_drawingTextX->text("");
+	m_drawingTextY->text("");
+}
+
+void View::validateBuffer() {
+	m_drawing->push_back(m_drawingBuffer);
+	m_drawingBuffer = NULL;
+	m_drawingTextX->text("");
+	m_drawingTextY->text("");
+}
+
+
 //Getters
 Scale* View::xScale() {
 	return m_xScale;
@@ -110,8 +149,19 @@ std::vector<Rect*>* View::drawing() {
 	return m_drawing;
 }
 
+Rect* View::drawingBuffer() {
+	return m_drawingBuffer;
+}
 
 //Display management
+void View::updateXText(std::string p_text, int p_xParentPos, int p_yParentPos) {
+
+}
+
+void View::updateYText(std::string p_text, int p_xParentPos, int p_yParentPos) {
+
+}
+
 void View::updateXScale(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
 	m_xScale->deleteTextures();
 	m_xScale->generateTextures(p_renderer, p_xParentPos + x(), p_yParentPos + y());
@@ -134,13 +184,20 @@ void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) 
 
 	for (int i = 0; i < m_drawing->size(); i++) {
 		if (m_drawing->at(i)->draw())
-			m_drawing->at(i)->render(p_renderer, { 100, 100, 255, 0 });
+			m_drawing->at(i)->render(p_renderer, { 100, 100, 255, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
 		else
-			m_drawing->at(i)->render(p_renderer, { 255, 255, 255, 0 });
+			m_drawing->at(i)->render(p_renderer, { 255, 255, 255, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
 	}
-
+	if (m_drawingBuffer) {
+		if (m_drawingBuffer->draw())
+			m_drawingBuffer->render(p_renderer, { 125, 125, 255, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
+		else
+			m_drawingBuffer->render(p_renderer, { 125, 125, 125, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
+	}
 	m_xScale->render(p_renderer, p_xParentPos + x(), p_yParentPos + y());
 	m_yScale->render(p_renderer, p_xParentPos + x(), p_yParentPos + y());
+
+	
 }
 
 

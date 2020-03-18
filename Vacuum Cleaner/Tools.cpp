@@ -50,285 +50,79 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	SDL_GetMouseState(&x_mousePos, &y_mousePos);
 
 	while (SDL_PollEvent(&e)) {
-		switch (*currentStep) {
-		case Step::DRAW:
-			switch (*currentTool)
-			{
-			case Tool::DRAW:
-				switch (e.type) {
-				case SDL_MOUSEMOTION:
-					//Updating buffer's target position and metrics display
-					if (drawingBuffer) {
-						drawingBuffer->target({ x_mousePos, y_mousePos });
-
-						drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
-
-						drawingTextY->makeFromInt(abs(drawingBuffer->h()) , { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
-					}
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-					if (e.button.button == SDL_BUTTON_RIGHT) {
-						if (!AddRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !FillButton->trigger(x_mousePos, y_mousePos, (void*)currentTool)) {
-							switchToolToNone((void*)currentTool);
-							if (drawingBuffer) {
-								delete drawingBuffer;
-								drawingBuffer = NULL;
-								drawingTextX->text("");
-								drawingTextY->text("");
-							}
+		switch (e.type) {
+		/*------Mouse events------*/
+		case SDL_MOUSEBUTTONDOWN:
+			clickLock = true;
+			if (e.button.button == SDL_BUTTON_LEFT) {
+				if (AddRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
+				else if (RmvRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
+				else if (GraphRectangleButton->trigger(x_mousePos, y_mousePos, NULL)) break;
+				else {
+					if (*currentTool == Tool::DRAW) {
+						if (!view->drawingBuffer()) {
+							view->setBufferOrigin(x_mousePos, y_mousePos, true, 280, 20);
 						}
 						else {
-							if (drawingBuffer) {
-								delete drawingBuffer;
-								drawingBuffer = NULL;
-								drawingTextX->text("");
-								drawingTextY->text("");
-							}
+							view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+							view->validateBuffer();
 						}
 					}
-					else if (e.button.button == SDL_BUTTON_LEFT) {
-						if (!clickLock) {
-							clickLock = true;
-							if (!AddRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !FillButton->trigger(x_mousePos, y_mousePos, (void*)currentTool)) {
-								if (!drawingBuffer) {
-									drawingBuffer = new Rect(x_mousePos, y_mousePos, 0, 0, true);
-								}
-								else {
-									//Pushing buffer to the stack and setting it to NULL
-									view->drawing()->push_back(drawingBuffer);
-									drawingBuffer = NULL;
-									drawingTextX->text("");
-									drawingTextY->text("");
-								}
-							}
-							else {
-								if (drawingBuffer) {
-									delete drawingBuffer;
-									drawingBuffer = NULL;
-									drawingTextX->text("");
-									drawingTextY->text("");
-								}
-							}
-						}
-					}
-					break;
-				case SDL_MOUSEBUTTONUP:
-					if (e.button.button == SDL_BUTTON_LEFT) {
-						clickLock = false;
-					}
-					break;
-				case SDL_KEYDOWN:
-					switch (e.key.keysym.sym) {
-					case SDLK_LEFT:
-						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() >= 0) {
-							drawingBuffer->w(drawingBuffer->w() - 1);
-
-							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
-						}
-						break;
-					case SDLK_RIGHT:
-						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() < 1280) {
-							drawingBuffer->w(drawingBuffer->w() + 1);
-
-							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
-						}
-						break;
-					case SDLK_UP:
-						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() >= 0) {
-							drawingBuffer->h(drawingBuffer->h() - 1);
-
-							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
-						}
-						break;
-					case SDLK_DOWN:
-						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() < 720) {
-							drawingBuffer->h(drawingBuffer->h() + 1);
-
-							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
-						}
-						break;
-					case SDLK_SPACE:
-						if (!drawingBuffer) {
-							drawingBuffer = new Rect(x_mousePos, y_mousePos, 0, 0, true);
+					else if (*currentTool == Tool::ERASE) {
+						if (!view->drawingBuffer()) {
+							view->setBufferOrigin(x_mousePos, y_mousePos, false, 280, 20);
 						}
 						else {
-							//Pushing buffer to the stack and setting it to NULL
-							view->drawing()->push_back(drawingBuffer);
-							drawingBuffer = NULL;
-							drawingTextX->text("");
-							drawingTextY->text("");
+							view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+							view->validateBuffer();
 						}
-						break;
 					}
-					break;
-				case SDL_MOUSEWHEEL:
-					while (e.wheel.y > 0) {
-						view->zoom(ZOOM_STEP, x_mousePos, y_mousePos);
-						e.wheel.y--;
-					}
-					while (e.wheel.y < 0) {
-						view->zoom(-ZOOM_STEP, x_mousePos, y_mousePos);
-						e.wheel.y++;
-					}
-					view->updateScales(p_renderer, 260, 0);
-					break;
-				case SDL_QUIT:
-					*currentStep = Step::QUIT;
-					break;
 				}
+			}
+			else if (e.button.button == SDL_BUTTON_MIDDLE) {
+
+			}
+			else if (e.button.button == SDL_BUTTON_RIGHT) {
+				view->discardBuffer();
+				switchToolToNone(currentTool);
+			}
+			break;
+		case SDL_MOUSEBUTTONUP:
+			clickLock = false;
+			break;
+		case SDL_MOUSEMOTION:
+			break;
+		case SDL_MOUSEWHEEL:
+			if (e.wheel.y > 0) view->zoom(1, 0, 0);
+			else view->zoom(-1, 0, 0);
+			view->updateScales(p_renderer, 260, 0);
+			break;
+		/*-----------------------*/
+		/*----Keyboard events----*/
+		case SDL_KEYDOWN:
+			switch (e.key.keysym.sym) {
+			case SDLK_UP:
 				break;
-			case Tool::ERASE:
-				switch (e.type) {
-				case SDL_MOUSEMOTION:
-					//Updating buffer's target position and metrics display
-					if (drawingBuffer) {
-						drawingBuffer->target({ x_mousePos, y_mousePos });
-
-						drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
-
-						drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
-					}
-					break;
-				case SDL_MOUSEBUTTONDOWN:
-					if (e.button.button == SDL_BUTTON_RIGHT) {
-						if (!AddRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !FillButton->trigger(x_mousePos, y_mousePos, (void*)currentTool)) {
-							switchToolToNone((void*)currentTool);
-							if (drawingBuffer) {
-								delete drawingBuffer;
-								drawingBuffer = NULL;
-								drawingTextX->text("");
-								drawingTextY->text("");
-							}
-						}
-						else {
-							if (drawingBuffer) {
-								delete drawingBuffer;
-								drawingBuffer = NULL;
-								drawingTextX->text("");
-								drawingTextY->text("");
-							}
-						}
-					}
-					else if (e.button.button == SDL_BUTTON_LEFT) {
-						if (!clickLock) {
-							clickLock = true;
-							if (!AddRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool) && !FillButton->trigger(x_mousePos, y_mousePos, (void*)currentTool)) {
-								if (!drawingBuffer) {
-									drawingBuffer = new Rect(x_mousePos, y_mousePos, 0, 0, false);
-								}
-								else {
-									//Pushing buffer to the stack and setting it to NULL
-									view->drawing()->push_back(drawingBuffer);
-									drawingBuffer = NULL;
-									drawingTextX->text("");
-									drawingTextY->text("");
-								}
-							}
-							else {
-								if (drawingBuffer) {
-									delete drawingBuffer;
-									drawingBuffer = NULL;
-									drawingTextX->text("");
-									drawingTextY->text("");
-								}
-							}
-						}
-					}
-					break;
-				case SDL_MOUSEBUTTONUP:
-					if (e.button.button == SDL_BUTTON_LEFT) {
-						clickLock = false;
-					}
-					break;
-				case SDL_KEYDOWN:
-					switch (e.key.keysym.sym) {
-					case SDLK_LEFT:
-						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() >= 0) {
-							drawingBuffer->w(drawingBuffer->w() - 1);
-
-							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
-						}
-						break;
-					case SDLK_RIGHT:
-						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() < 1280) {
-							drawingBuffer->w(drawingBuffer->w() + 1);
-
-							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
-						}
-						break;
-					case SDLK_UP:
-						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() >= 0) {
-							drawingBuffer->h(drawingBuffer->h() - 1);
-
-							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
-						}
-						break;
-					case SDLK_DOWN:
-						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() < 720) {
-							drawingBuffer->h(drawingBuffer->h() + 1);
-
-							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
-						}
-						break;
-					case SDLK_SPACE:
-						if (!drawingBuffer) {
-							drawingBuffer = new Rect(x_mousePos, y_mousePos, 0, 0, false);
-						}
-						else {
-							//Pushing buffer to the stack and setting it to NULL
-							view->drawing()->push_back(drawingBuffer);
-							drawingBuffer = NULL;
-							drawingTextX->text("");
-							drawingTextY->text("");
-						}
-						break;
-					}
-					break;
-				case SDL_MOUSEWHEEL:
-					while (e.wheel.y > 0) {
-						view->zoom(ZOOM_STEP, x_mousePos, y_mousePos);
-						e.wheel.y--;
-					}
-					while (e.wheel.y < 0) {
-						view->zoom(-ZOOM_STEP, x_mousePos, y_mousePos);
-						e.wheel.y++;
-					}
-					view->updateScales(p_renderer, 260, 0);
-					break;
-				case SDL_QUIT:
-					*currentStep = Step::QUIT;
-					break;
-				}
+			case SDLK_DOWN:
 				break;
+			case SDLK_LEFT:
 				break;
-			case Tool::NONE:
-				switch (e.type) {
-				case SDL_MOUSEBUTTONDOWN:
-					AddRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool);
-					RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool);
-					break;
-				case SDL_MOUSEWHEEL:
-					while (e.wheel.y > 0) {
-						view->zoom(ZOOM_STEP, x_mousePos, y_mousePos);
-						e.wheel.y--;
-					}
-					while (e.wheel.y < 0) {
-						view->zoom(-ZOOM_STEP, x_mousePos, y_mousePos);
-						e.wheel.y++;
-					}
-					view->updateScales(p_renderer, 260, 0);
-					break;
-				case SDL_QUIT:
-					*currentStep = Step::QUIT;
-					break;
-				}
+			case SDLK_RIGHT:
+				break;
+			case SDLK_SPACE:
+				break;
+			case SDLK_ESCAPE:
 				break;
 			}
+			break;
+		/*-----------------------*/
+		/*-----Window events-----*/
+		case SDL_QUIT:
 			break;
 		}
 	}
 
-	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, drawingBuffer, view, drawingTextX, drawingTextY, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
+	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, view, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
 	else {
 		delete view;
 		view = NULL;
@@ -343,7 +137,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	}
 }
 
-void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, View* view, Text* drawingTextX, Text* drawingTextY, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
+void render(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
 	currentFrame = SDL_GetTicks();
@@ -351,14 +145,11 @@ void render(SDL_Renderer* p_renderer, Step currentStep, Rect* drawingBuffer, Vie
 	//Render loop
 	while (currentFrame - lastFrame > 1000 / FRAMERATE) {
 		SDL_RenderClear(p_renderer);
+		if (view) view->render(p_renderer, 260, 0);
 		if (AddRectangleButton) AddRectangleButton->render();
 		if (RmvRectangleButton) RmvRectangleButton->render();
 		if (GraphRectangleButton) GraphRectangleButton->render();
 		if (FillButton) FillButton->render();
-		if (view) view->render(p_renderer, 260, 0);
-		if (drawingBuffer) drawingBuffer->render(p_renderer, { 150, 150, 220, 100 });
-		if (drawingTextX) drawingTextX->render(0, 0);
-		if (drawingTextY) drawingTextY->render(0, 0);
 		SDL_RenderPresent(p_renderer);
 		lastFrame += 1000 / FRAMERATE;
 	}

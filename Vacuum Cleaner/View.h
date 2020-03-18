@@ -2,6 +2,7 @@
 #include "Rect.h"
 #include "utils.h"
 #include "Scale.h"
+#include "Text.h"
 
 class View : public Rect {
 private:
@@ -11,7 +12,11 @@ private:
 
 	float m_zoom;
 	SDL_Point m_viewCenter;
+
 	std::vector<Rect*>* m_drawing;
+	Rect* m_drawingBuffer;
+	Text* m_drawingTextX;
+	Text* m_drawingTextY;
 
 	//Constructors
 	View();
@@ -27,8 +32,13 @@ public:
 	void setYScaleEndValue(float p_endValue);
 	void setYScaleValues(float p_beginValue, float p_endValue);
 
-	void moveCenter(int p_xDisplacement, int p_yDisplacement);		//both arguments are in pixels
+	void moveCenter(int p_xDisplacement, int p_yDisplacement);						//both arguments are in pixels
 	void zoom(float p_step, int p_xMousePos, int p_yMousePos);
+
+	void setBufferOrigin(int p_xPosition, int p_yPosition, bool p_drawing, int p_xParentPos, int p_yParentPos);			//Both arguments are in pixels
+	void setBufferTarget(int p_xPosition, int p_yPosition, int p_xParentPos, int p_yParentPos);							//Both arguments are un pixels
+	void discardBuffer();
+	void validateBuffer();
 
 	//Getters
 	Scale* xScale();
@@ -37,11 +47,16 @@ public:
 	float zoom();
 	SDL_Point viewCenter();
 	std::vector<Rect*>* drawing();
+	Rect* drawingBuffer();
 
 	//Display management
+	void updateXText(std::string p_text, int p_xParentPos, int p_yParentPos);
+	void updateYText(std::string p_text, int p_xParentPos, int p_yParentPos);
+
 	void updateXScale(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos);
 	void updateYScale(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos);
 	void updateScales(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos);
+
 	void render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos);
 
 	//Destoyer

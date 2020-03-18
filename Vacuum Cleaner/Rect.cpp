@@ -95,7 +95,14 @@ int Rect::h() {
 //Display management
 void Rect::render(SDL_Renderer* p_renderer, SDL_Color p_color) {
 	SDL_Rect tmp = { m_x, m_y, m_w, m_h };
-	if(m_draw) SDL_SetRenderDrawColor(p_renderer, p_color.r, p_color.g, p_color.b, p_color.a);
+	SDL_SetRenderDrawColor(p_renderer, p_color.r, p_color.g, p_color.b, p_color.a);
+	SDL_RenderFillRect(p_renderer, &tmp);
+	SDL_SetRenderDrawColor(p_renderer, 255, 255, 255, 0);
+}
+
+void Rect::render(SDL_Renderer* p_renderer, SDL_Color p_color, SDL_Point p_viewCenter, int p_xParentPos, int p_yParentPos, float p_zoom) {
+	SDL_Rect tmp = { ((float)(m_x - p_viewCenter.x) * p_zoom + (float)p_viewCenter.x) / PX_SIZE + p_xParentPos, (float)((m_y - p_viewCenter.y) * p_zoom + (float)p_viewCenter.y) / PX_SIZE + p_yParentPos, m_w / PX_SIZE * p_zoom, m_h / PX_SIZE * p_zoom };
+	SDL_SetRenderDrawColor(p_renderer, p_color.r, p_color.g, p_color.b, p_color.a);
 	SDL_RenderFillRect(p_renderer, &tmp);
 	SDL_SetRenderDrawColor(p_renderer, 255, 255, 255, 0);
 }
