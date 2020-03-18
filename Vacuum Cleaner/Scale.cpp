@@ -17,9 +17,7 @@ Scale::Scale(SDL_Renderer* p_renderer, SDL_Point p_pos, SDL_Point p_size, float 
 	m_step = p_step;
 	m_orientation = p_orientation;
 	m_digits = new std::vector<SDL_Texture*>();
-	m_digits->clear();
-	m_digitsPosition = new std::vector<SDL_Rect>();
-	m_digitsPosition->clear();
+	m_digitsPosition = new std::vector<SDL_Rect*>();
 }
 
 
@@ -87,7 +85,7 @@ void Scale::generateTextures(SDL_Renderer* p_renderer, int p_xParentPos, int p_y
 					texture = SDL_CreateTextureFromSurface(p_renderer, surface);
 					SDL_QueryTexture(texture, NULL, NULL, &texture_w, &texture_h);
 
-					SDL_Rect tmp = { (float)(x() + p_xParentPos) + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h() - texture_w / 2,  y() + p_yParentPos - 1, texture_w, texture_h };
+					SDL_Rect* tmp = new SDL_Rect({static_cast<int>((float)(x() + p_xParentPos) + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h() - texture_w / 2.0f),  y() + p_yParentPos - 1, texture_w, texture_h });
 
 					m_digits->push_back(texture);
 					m_digitsPosition->push_back(tmp);
@@ -107,7 +105,7 @@ void Scale::generateTextures(SDL_Renderer* p_renderer, int p_xParentPos, int p_y
 					texture = SDL_CreateTextureFromSurface(p_renderer, surface);
 					SDL_QueryTexture(texture, NULL, NULL, &texture_w, &texture_h);
 
-					SDL_Rect tmp = { x() + p_xParentPos - 1, (float)(y() + p_yParentPos) + (i - m_beginValue) * (h() - w()) / (m_endValue - m_beginValue) + w() - texture_h / 2, texture_w, texture_h };
+					SDL_Rect* tmp = new SDL_Rect({static_cast<int>(x() + p_xParentPos - 1, (float)(y() + p_yParentPos) + (i - m_beginValue) * (h() - w()) / (m_endValue - m_beginValue) + w() - texture_h / 2), texture_w, texture_h });
 
 					m_digits->push_back(texture);
 					m_digitsPosition->push_back(tmp);
@@ -124,10 +122,10 @@ void Scale::deleteTextures() {
 	//Delete previous textures and rectangles
 	for (int i = 0; i < m_digits->size(); i++) {
 		SDL_DestroyTexture(m_digits->at(i));
+		delete m_digitsPosition->at(i);
 	}
-	delete m_digits;
-
-	delete m_digitsPosition;
+	m_digits->clear();
+	m_digitsPosition->clear();
 }
 
 void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
@@ -164,10 +162,10 @@ void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos)
 	if (m_digits->empty()) generateTextures(p_renderer, p_xParentPos, p_yParentPos);
 	
 	for (j = 0; j < m_digits->size(); j++) {
-		tmp = { 0, 0, m_digitsPosition->at(j).w, m_digitsPosition->at(j).h };
+		tmp = { 0, 0, m_digitsPosition->at(j)->w, m_digitsPosition->at(j)->h };
 		center = { tmp.x + tmp.w / 2, tmp.y + tmp.h / 2 };
-		if (m_orientation == Orientation::HORIZONTAL) SDL_RenderCopy(p_renderer, m_digits->at(j), &tmp, &(m_digitsPosition->at(j)));
-		else SDL_RenderCopyEx(p_renderer, m_digits->at(j), &tmp, &(m_digitsPosition->at(j)), 270, &center, SDL_FLIP_NONE);
+		if (m_orientation == Orientation::HORIZONTAL) SDL_RenderCopy(p_renderer, m_digits->at(j), &tmp, m_digitsPosition->at(j));
+		else SDL_RenderCopyEx(p_renderer, m_digits->at(j), &tmp, m_digitsPosition->at(j), 270, &center, SDL_FLIP_NONE);
 	}
 
 	SDL_SetRenderDrawColor(p_renderer, 255, 255, 255, 0);
@@ -178,4 +176,6 @@ void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos)
 //Destroyer
 Scale::~Scale() {
 	this->deleteTextures();
+	delete m_digits;
+	delete m_digitsPosition;
 }

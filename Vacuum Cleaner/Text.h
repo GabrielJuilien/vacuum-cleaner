@@ -51,6 +51,7 @@ public:
 
 	//Display management
 	void render(int x_parentPos, int y_parentPos);
+	void makeFromInt(int p_value, SDL_Point destination);
 
 	//Destroyers
 	~Text();

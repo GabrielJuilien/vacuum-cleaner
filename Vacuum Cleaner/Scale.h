@@ -14,7 +14,7 @@ private:
 	float m_step;						//Space between two graduations
 	Orientation m_orientation;			//Orientation of the scale
 	std::vector<SDL_Texture*>* m_digits;
-	std::vector<SDL_Rect>* m_digitsPosition;
+	std::vector<SDL_Rect*>* m_digitsPosition;
 
 	//Constructors
 	Scale();

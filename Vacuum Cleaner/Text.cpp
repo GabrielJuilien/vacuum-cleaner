@@ -441,6 +441,18 @@ void Text::render(int x_parentPos, int y_parentPos) {
 	SDL_RenderCopy(m_renderer, m_textTexture, NULL, &tmp_dest);
 }
 
+void Text::makeFromInt(int p_value, SDL_Point p_destination) {
+	std::string p_text;
+	destination(p_destination.x, p_destination.y);
+	p_text = "";
+	p_text.append(std::to_string((int)p_value * PX_SIZE / 100));
+	p_text.append(",");
+	if (p_value * PX_SIZE % 100 < 10) p_text.append("0");
+	p_text.append(std::to_string(p_value * PX_SIZE % 100));
+	p_text.append("m");
+	text(p_text);
+}
+
 
 //Destroyers
 Text::~Text() {

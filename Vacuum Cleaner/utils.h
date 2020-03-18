@@ -24,3 +24,4 @@
 #define PX_SIZE 2  //Real size of a pixel, in centimeters
 #define ZOOM_MIN 1
 #define ZOOM_MAX 5
+#define ZOOM_STEP 0.5f

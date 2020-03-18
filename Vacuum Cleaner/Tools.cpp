@@ -41,13 +41,13 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 
 	static View* view = new View(p_renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
 
-	static std::vector<Rect*>* drawing = view->drawing();
 	static Rect* drawingBuffer = NULL;
 	static Text* drawingTextX = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
 	static Text* drawingTextY = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
 
-	SDL_GetMouseState(&x_mousePos, &y_mousePos);
+	static int decimals;
 
+	SDL_GetMouseState(&x_mousePos, &y_mousePos);
 
 	while (SDL_PollEvent(&e)) {
 		switch (*currentStep) {
@@ -61,23 +61,9 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 					if (drawingBuffer) {
 						drawingBuffer->target({ x_mousePos, y_mousePos });
 
-						drawingTextX->destination(drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y());
-						a = abs(drawingBuffer->w());
-						s_a = "";
-						s_a.append(std::to_string((int)a * PX_SIZE / 100));
-						s_a.append(",");
-						s_a.append(std::to_string((int)a * PX_SIZE % 100));
-						s_a.append("m");
-						drawingTextX->text(s_a);
+						drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
 
-						drawingTextY->destination(drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2);
-						b = abs(drawingBuffer->h());
-						s_b = "";
-						s_b.append(std::to_string((int)b * PX_SIZE / 100));
-						s_b.append(",");
-						s_b.append(std::to_string((int)b * PX_SIZE % 100));
-						s_b.append("m");
-						drawingTextY->text(s_b);
+						drawingTextY->makeFromInt(abs(drawingBuffer->h()) , { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
 					}
 					break;
 				case SDL_MOUSEBUTTONDOWN:
@@ -109,7 +95,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 								}
 								else {
 									//Pushing buffer to the stack and setting it to NULL
-									drawing->push_back(drawingBuffer);
+									view->drawing()->push_back(drawingBuffer);
 									drawingBuffer = NULL;
 									drawingTextX->text("");
 									drawingTextY->text("");
@@ -137,56 +123,28 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() >= 0) {
 							drawingBuffer->w(drawingBuffer->w() - 1);
 
-							drawingTextX->destination(drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y());
-							a = abs(drawingBuffer->w());
-							s_a = "";
-							s_a.append(std::to_string((int)a * PX_SIZE / 100));
-							s_a.append(",");
-							s_a.append(std::to_string((int)a * PX_SIZE % 100));
-							s_a.append("m");
-							drawingTextX->text(s_a);
+							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
 						}
 						break;
 					case SDLK_RIGHT:
 						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() < 1280) {
 							drawingBuffer->w(drawingBuffer->w() + 1);
 
-							drawingTextX->destination(drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y());
-							a = abs(drawingBuffer->w());
-							s_a = "";
-							s_a.append(std::to_string((int)a * PX_SIZE / 100));
-							s_a.append(",");
-							s_a.append(std::to_string((int)a * PX_SIZE % 100));
-							s_a.append("m");
-							drawingTextX->text(s_a);
+							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
 						}
 						break;
 					case SDLK_UP:
 						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() >= 0) {
 							drawingBuffer->h(drawingBuffer->h() - 1);
 
-							drawingTextY->destination(drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2);
-							b = abs(drawingBuffer->h());
-							s_b = "";
-							s_b.append(std::to_string((int)b * PX_SIZE / 100));
-							s_b.append(",");
-							s_b.append(std::to_string((int)b * PX_SIZE % 100));
-							s_b.append("m");
-							drawingTextY->text(s_b);
+							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
 						}
 						break;
 					case SDLK_DOWN:
 						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() < 720) {
 							drawingBuffer->h(drawingBuffer->h() + 1);
 
-							drawingTextY->destination(drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2);
-							b = abs(drawingBuffer->h());
-							s_b = "";
-							s_b.append(std::to_string((int)b * PX_SIZE / 100));
-							s_b.append(",");
-							s_b.append(std::to_string((int)b * PX_SIZE % 100));
-							s_b.append("m");
-							drawingTextY->text(s_b);
+							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
 						}
 						break;
 					case SDLK_SPACE:
@@ -195,13 +153,24 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 						}
 						else {
 							//Pushing buffer to the stack and setting it to NULL
-							drawing->push_back(drawingBuffer);
+							view->drawing()->push_back(drawingBuffer);
 							drawingBuffer = NULL;
 							drawingTextX->text("");
 							drawingTextY->text("");
 						}
 						break;
 					}
+					break;
+				case SDL_MOUSEWHEEL:
+					while (e.wheel.y > 0) {
+						view->zoom(ZOOM_STEP, x_mousePos, y_mousePos);
+						e.wheel.y--;
+					}
+					while (e.wheel.y < 0) {
+						view->zoom(-ZOOM_STEP, x_mousePos, y_mousePos);
+						e.wheel.y++;
+					}
+					view->updateScales(p_renderer, 260, 0);
 					break;
 				case SDL_QUIT:
 					*currentStep = Step::QUIT;
@@ -215,23 +184,9 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 					if (drawingBuffer) {
 						drawingBuffer->target({ x_mousePos, y_mousePos });
 
-						drawingTextX->destination(drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y());
-						a = abs(drawingBuffer->w());
-						s_a = "";
-						s_a.append(std::to_string((int)a * PX_SIZE / 100));
-						s_a.append(",");
-						s_a.append(std::to_string((int)a * PX_SIZE % 100));
-						s_a.append("m");
-						drawingTextX->text(s_a);
+						drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
 
-						drawingTextY->destination(drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2);
-						b = abs(drawingBuffer->h());
-						s_b = "";
-						s_b.append(std::to_string((int)b * PX_SIZE / 100));
-						s_b.append(",");
-						s_b.append(std::to_string((int)b * PX_SIZE % 100));
-						s_b.append("m");
-						drawingTextY->text(s_b);
+						drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
 					}
 					break;
 				case SDL_MOUSEBUTTONDOWN:
@@ -263,7 +218,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 								}
 								else {
 									//Pushing buffer to the stack and setting it to NULL
-									drawing->push_back(drawingBuffer);
+									view->drawing()->push_back(drawingBuffer);
 									drawingBuffer = NULL;
 									drawingTextX->text("");
 									drawingTextY->text("");
@@ -291,56 +246,28 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() >= 0) {
 							drawingBuffer->w(drawingBuffer->w() - 1);
 
-							drawingTextX->destination(drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y());
-							a = abs(drawingBuffer->w());
-							s_a = "";
-							s_a.append(std::to_string((int)a * PX_SIZE / 100));
-							s_a.append(",");
-							s_a.append(std::to_string((int)a * PX_SIZE % 100));
-							s_a.append("m");
-							drawingTextX->text(s_a);
+							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
 						}
 						break;
 					case SDLK_RIGHT:
 						if (drawingBuffer && drawingBuffer->x() + drawingBuffer->w() < 1280) {
 							drawingBuffer->w(drawingBuffer->w() + 1);
 
-							drawingTextX->destination(drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y());
-							a = abs(drawingBuffer->w());
-							s_a = "";
-							s_a.append(std::to_string((int)a * PX_SIZE / 100));
-							s_a.append(",");
-							s_a.append(std::to_string((int)a * PX_SIZE % 100));
-							s_a.append("m");
-							drawingTextX->text(s_a);
+							drawingTextX->makeFromInt(abs(drawingBuffer->w()), { drawingBuffer->x() + drawingBuffer->w() / 2 - drawingTextX->x_size() / 2, drawingBuffer->y() });
 						}
 						break;
 					case SDLK_UP:
 						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() >= 0) {
 							drawingBuffer->h(drawingBuffer->h() - 1);
 
-							drawingTextY->destination(drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2);
-							b = abs(drawingBuffer->h());
-							s_b = "";
-							s_b.append(std::to_string((int)b * PX_SIZE / 100));
-							s_b.append(",");
-							s_b.append(std::to_string((int)b * PX_SIZE % 100));
-							s_b.append("m");
-							drawingTextY->text(s_b);
+							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
 						}
 						break;
 					case SDLK_DOWN:
 						if (drawingBuffer && drawingBuffer->y() + drawingBuffer->h() < 720) {
 							drawingBuffer->h(drawingBuffer->h() + 1);
 
-							drawingTextY->destination(drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2);
-							b = abs(drawingBuffer->h());
-							s_b = "";
-							s_b.append(std::to_string((int)b * PX_SIZE / 100));
-							s_b.append(",");
-							s_b.append(std::to_string((int)b * PX_SIZE % 100));
-							s_b.append("m");
-							drawingTextY->text(s_b);
+							drawingTextY->makeFromInt(abs(drawingBuffer->h()), { drawingBuffer->x(), drawingBuffer->y() + drawingBuffer->h() / 2 - drawingTextY->y_size() / 2 });
 						}
 						break;
 					case SDLK_SPACE:
@@ -349,13 +276,24 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 						}
 						else {
 							//Pushing buffer to the stack and setting it to NULL
-							drawing->push_back(drawingBuffer);
+							view->drawing()->push_back(drawingBuffer);
 							drawingBuffer = NULL;
 							drawingTextX->text("");
 							drawingTextY->text("");
 						}
 						break;
 					}
+					break;
+				case SDL_MOUSEWHEEL:
+					while (e.wheel.y > 0) {
+						view->zoom(ZOOM_STEP, x_mousePos, y_mousePos);
+						e.wheel.y--;
+					}
+					while (e.wheel.y < 0) {
+						view->zoom(-ZOOM_STEP, x_mousePos, y_mousePos);
+						e.wheel.y++;
+					}
+					view->updateScales(p_renderer, 260, 0);
 					break;
 				case SDL_QUIT:
 					*currentStep = Step::QUIT;
@@ -368,6 +306,17 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 				case SDL_MOUSEBUTTONDOWN:
 					AddRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool);
 					RmvRectangleButton->trigger(x_mousePos, y_mousePos, (void*)currentTool);
+					break;
+				case SDL_MOUSEWHEEL:
+					while (e.wheel.y > 0) {
+						view->zoom(ZOOM_STEP, x_mousePos, y_mousePos);
+						e.wheel.y--;
+					}
+					while (e.wheel.y < 0) {
+						view->zoom(-ZOOM_STEP, x_mousePos, y_mousePos);
+						e.wheel.y++;
+					}
+					view->updateScales(p_renderer, 260, 0);
 					break;
 				case SDL_QUIT:
 					*currentStep = Step::QUIT;
