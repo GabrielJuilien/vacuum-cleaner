@@ -85,6 +85,5 @@ int main(int argc, char** argv)
 	SDL_Quit();
 
 	_CrtDumpMemoryLeaks();
-	system("pause");
 	return EXIT_SUCCESS;
 }

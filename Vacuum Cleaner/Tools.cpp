@@ -29,23 +29,14 @@ int switchToolToCGraph(void* input) {
 }
 
 void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
-
-	int a, b;
-	std::string s_a, s_b;
-
 	static SDL_Event e;
 	static int x_mousePos, y_mousePos;
 	static bool clickLock = false;
+	static bool wheelClick = false;
 
 	static Tool* currentTool = new Tool(Tool::NONE);
 
 	static View* view = new View(p_renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
-
-	static Rect* drawingBuffer = NULL;
-	static Text* drawingTextX = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
-	static Text* drawingTextY = new Text("", p_renderer, { 0, 0, 0, 0 }, 16, 0, 0);
-
-	static int decimals;
 
 	SDL_GetMouseState(&x_mousePos, &y_mousePos);
 
@@ -64,7 +55,6 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 							view->setBufferOrigin(x_mousePos, y_mousePos, true, 280, 20);
 						}
 						else {
-							view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
 							view->validateBuffer();
 						}
 					}
@@ -73,14 +63,13 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 							view->setBufferOrigin(x_mousePos, y_mousePos, false, 280, 20);
 						}
 						else {
-							view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
 							view->validateBuffer();
 						}
 					}
 				}
 			}
 			else if (e.button.button == SDL_BUTTON_MIDDLE) {
-
+				wheelClick = true;
 			}
 			else if (e.button.button == SDL_BUTTON_RIGHT) {
 				view->discardBuffer();
@@ -88,36 +77,82 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 			}
 			break;
 		case SDL_MOUSEBUTTONUP:
-			clickLock = false;
+			clickLock = false;	
+			if (wheelClick) view->updateScales(p_renderer, 260, 0);
+			wheelClick = false;
 			break;
 		case SDL_MOUSEMOTION:
+			//Moving preview
+			if (view->drawingBuffer()) {
+				view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+			}
+			if (wheelClick) {
+				view->moveCenter(-e.motion.xrel, -e.motion.yrel);
+			}
 			break;
 		case SDL_MOUSEWHEEL:
-			if (e.wheel.y > 0) view->zoom(1, 0, 0);
-			else view->zoom(-1, 0, 0);
+			while (e.wheel.y > 0) {
+				view->zoom(1.0f, 0, 0);
+				e.wheel.y--;
+			}
+			while (e.wheel.y < 0) {
+				view->zoom(-1.0f, 0, 0);
+				view->moveCenter(view->viewer()->w() / 2 * PX_SIZE - view->viewCenter().x, view->viewer()->h() / 2 * PX_SIZE - view->viewCenter().y);
+				e.wheel.y++;
+			}
 			view->updateScales(p_renderer, 260, 0);
 			break;
 		/*-----------------------*/
 		/*----Keyboard events----*/
 		case SDL_KEYDOWN:
+			int x, y;
 			switch (e.key.keysym.sym) {
 			case SDLK_UP:
+				SDL_GetGlobalMouseState(&x, &y);
+				SDL_WarpMouseGlobal(x, y - 1);
+				SDL_GetMouseState(&x_mousePos, &y_mousePos);
+				if (view->drawingBuffer()) {
+					view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+				}
 				break;
 			case SDLK_DOWN:
+				SDL_GetGlobalMouseState(&x, &y);
+				SDL_WarpMouseGlobal(x, y + 1);
+				SDL_GetMouseState(&x_mousePos, &y_mousePos);
+				if (view->drawingBuffer()) {
+					view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+				}
 				break;
 			case SDLK_LEFT:
+				SDL_GetGlobalMouseState(&x, &y);
+				SDL_WarpMouseGlobal(x - 1, y);
+				SDL_GetMouseState(&x_mousePos, &y_mousePos);
+				if (view->drawingBuffer()) {
+					view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+				}
 				break;
 			case SDLK_RIGHT:
+				SDL_GetGlobalMouseState(&x, &y);
+				SDL_WarpMouseGlobal(x + 1, y);
+				SDL_GetMouseState(&x_mousePos, &y_mousePos);
+				if (view->drawingBuffer()) {
+					view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+				}
 				break;
 			case SDLK_SPACE:
+				if (view->drawingBuffer()) {
+					view->validateBuffer();
+				}
 				break;
 			case SDLK_ESCAPE:
+				*currentStep = Step::QUIT;
 				break;
 			}
 			break;
 		/*-----------------------*/
 		/*-----Window events-----*/
 		case SDL_QUIT:
+			*currentStep = Step::QUIT;
 			break;
 		}
 	}
@@ -126,12 +161,6 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	else {
 		delete view;
 		view = NULL;
-		if (drawingBuffer) delete drawingBuffer;
-		drawingBuffer = NULL;
-		delete drawingTextX;
-		drawingTextX = NULL;
-		delete drawingTextY;
-		drawingTextY = NULL;
 		delete currentTool;
 		currentTool = NULL;
 	}

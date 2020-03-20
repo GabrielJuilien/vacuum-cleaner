@@ -60,32 +60,30 @@ void View::setYScaleValues(float p_beginValue, float p_endValue) {
 }
 
 void View::moveCenter(int p_xDisplacement, int p_yDisplacement) {
-	float relativeXDisplacement = p_xDisplacement * PX_SIZE / m_zoom;
+	float relativeXDisplacement = (float)p_xDisplacement * PX_SIZE / m_zoom;
 	float domainRightBorderPosition = (float)m_viewer->w() * PX_SIZE;
-	float currentRightBorderPosition = m_viewCenter.x + m_viewer->w() / 2 * PX_SIZE / m_zoom;
+	float currentRightBorderPosition = xScale()->endValue();
 	float domainLeftBorderPosition = 0.0f;
-	float currentLeftBorderPosition = m_viewCenter.x - m_viewer->w() / 2 * PX_SIZE / m_zoom;
+	float currentLeftBorderPosition = xScale()->beginValue();
 
-	float relativeYDisplacement = p_yDisplacement * PX_SIZE / m_zoom;
+	float relativeYDisplacement = (float)p_yDisplacement * PX_SIZE / m_zoom;
 	float domainBotBorderPosition = (float)m_viewer->h() * PX_SIZE;
-	float currentBotBorderPosition = m_viewCenter.y + m_viewer->h() / 2 * PX_SIZE / m_zoom;
+	float currentBotBorderPosition = yScale()->endValue();
 	float domainTopBorderPosition = 0.0f;
-	float currentTopBorderPosition = m_viewCenter.y - m_viewer->h() / 2 * PX_SIZE / m_zoom;
+	float currentTopBorderPosition = yScale()->beginValue();
 	
-	if (m_viewCenter.x + relativeXDisplacement > domainLeftBorderPosition && m_viewCenter.x + relativeXDisplacement < domainRightBorderPosition) {
+	if (currentLeftBorderPosition + relativeXDisplacement >= domainLeftBorderPosition && currentRightBorderPosition + relativeXDisplacement <= domainRightBorderPosition) {
 		m_viewCenter.x += (int)relativeXDisplacement;
 		xScale()->values(xScale()->beginValue() + relativeXDisplacement, xScale()->endValue() + relativeXDisplacement);
 	}
-	if (m_viewCenter.y + relativeYDisplacement > domainBotBorderPosition && m_viewCenter.y + relativeYDisplacement < domainTopBorderPosition) {
+	if (currentTopBorderPosition + relativeYDisplacement >= domainTopBorderPosition && currentBotBorderPosition + relativeYDisplacement <= domainBotBorderPosition) {
 		m_viewCenter.y += (int)relativeYDisplacement;
 		yScale()->values(yScale()->beginValue() + relativeYDisplacement, yScale()->endValue() + relativeYDisplacement);
 	}
 }
 
 void View::zoom(float p_step, int p_xMousePos, int p_yMousePos) {
-
 	m_zoom = (m_zoom + p_step <= ZOOM_MAX && m_zoom + p_step >= ZOOM_MIN) ? m_zoom + p_step : m_zoom;
-
 	setXScaleValues(m_viewCenter.x - m_viewer->w() / 2 * PX_SIZE / m_zoom, m_viewCenter.x + m_viewer->w() / 2 * PX_SIZE / m_zoom);
 	setYScaleValues(m_viewCenter.y - m_viewer->h() / 2 * PX_SIZE / m_zoom, m_viewCenter.y + m_viewer->h() / 2 * PX_SIZE / m_zoom);
 }
@@ -206,8 +204,13 @@ View::~View() {
 	delete m_xScale;
 	delete m_yScale;
 	delete m_viewer;
+
 	for (int i = 0; i < m_drawing->size(); i++) {
 		delete m_drawing->at(i);
 	}
 	delete m_drawing;
+	if (m_drawingBuffer)
+		delete m_drawingBuffer;
+	delete m_drawingTextX;
+	delete m_drawingTextY;
 }
