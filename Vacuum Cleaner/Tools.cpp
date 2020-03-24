@@ -82,7 +82,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 			wheelClick = false;
 			break;
 		case SDL_MOUSEMOTION:
-			//Moving preview
+			SDL_GetMouseState(&x_mousePos, &y_mousePos);
 			if (view->drawingBuffer()) {
 				view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
 			}
@@ -95,9 +95,11 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 				view->zoom(1.0f, 0, 0);
 				e.wheel.y--;
 			}
+			if (e.wheel.y < 0) {
+				view->moveCenter(view->viewer()->w() / 2 * PX_SIZE - view->viewCenter().x, view->viewer()->h() / 2 * PX_SIZE - view->viewCenter().y);
+			}
 			while (e.wheel.y < 0) {
 				view->zoom(-1.0f, 0, 0);
-				view->moveCenter(view->viewer()->w() / 2 * PX_SIZE - view->viewCenter().x, view->viewer()->h() / 2 * PX_SIZE - view->viewCenter().y);
 				e.wheel.y++;
 			}
 			view->updateScales(p_renderer, 260, 0);
@@ -140,8 +142,17 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 				}
 				break;
 			case SDLK_SPACE:
+				SDL_GetMouseState(&x_mousePos, &y_mousePos);
 				if (view->drawingBuffer()) {
 					view->validateBuffer();
+				}
+				else {
+					if (*currentTool == Tool::DRAW) {
+						view->setBufferOrigin(x_mousePos, y_mousePos, true, 280, 20);
+					}
+					else if (*currentTool == Tool::ERASE) {
+						view->setBufferOrigin(x_mousePos, y_mousePos, false, 280, 20);
+					}
 				}
 				break;
 			case SDLK_ESCAPE:
@@ -155,6 +166,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 			*currentStep = Step::QUIT;
 			break;
 		}
+		/*-----------------------*/
 	}
 
 	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, view, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
@@ -168,13 +180,15 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 
 void render(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
-
+	static int x, y;
 	currentFrame = SDL_GetTicks();
 
 	//Render loop
 	while (currentFrame - lastFrame > 1000 / FRAMERATE) {
 		SDL_RenderClear(p_renderer);
-		if (view) view->render(p_renderer, 260, 0);
+		if (view) {
+			view->render(p_renderer, 260, 0);
+		}
 		if (AddRectangleButton) AddRectangleButton->render();
 		if (RmvRectangleButton) RmvRectangleButton->render();
 		if (GraphRectangleButton) GraphRectangleButton->render();

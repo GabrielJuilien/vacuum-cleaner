@@ -1,8 +1,9 @@
 #pragma once
-#include "Rect.h"
 #include "utils.h"
+#include "Rect.h"
 #include "Scale.h"
 #include "Text.h"
+#include "Line.h"
 
 class View : public Rect {
 private:
@@ -15,8 +16,11 @@ private:
 
 	std::vector<Rect*>* m_drawing;
 	Rect* m_drawingBuffer;
+
 	Text* m_drawingTextX;
 	Text* m_drawingTextY;
+	Line* m_lineX;
+	Line* m_lineY;
 
 	//Constructors
 	View();

@@ -165,6 +165,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="GraphNode.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Rect.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="GraphNode.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="Scale.h" />
     <ClInclude Include="Text.h" />
