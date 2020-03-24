@@ -30,7 +30,10 @@ int switchToolToCGraph(void* input) {
 
 void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
 	static SDL_Event e;
+
 	static int x_mousePos, y_mousePos;
+	static float x_mouseBuffer, y_mouseBuffer;
+
 	static bool clickLock = false;
 	static bool wheelClick = false;
 
@@ -70,6 +73,8 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 			}
 			else if (e.button.button == SDL_BUTTON_MIDDLE) {
 				wheelClick = true;
+				x_mouseBuffer = x_mousePos;
+				y_mouseBuffer = y_mousePos;
 			}
 			else if (e.button.button == SDL_BUTTON_RIGHT) {
 				view->discardBuffer();
@@ -78,8 +83,11 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 			break;
 		case SDL_MOUSEBUTTONUP:
 			clickLock = false;	
-			if (wheelClick) view->updateScales(p_renderer, 260, 0);
-			wheelClick = false;
+			if (wheelClick) {
+				wheelClick = false;
+				view->moveCenter(x_mouseBuffer - x_mousePos, y_mouseBuffer - y_mousePos);
+				view->updateScales(p_renderer, 260, 0);
+			}
 			break;
 		case SDL_MOUSEMOTION:
 			SDL_GetMouseState(&x_mousePos, &y_mousePos);
@@ -87,7 +95,9 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 				view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
 			}
 			if (wheelClick) {
-				view->moveCenter(-e.motion.xrel, -e.motion.yrel);
+				view->moveCenter(x_mouseBuffer - x_mousePos, y_mouseBuffer - y_mousePos);
+				x_mouseBuffer = x_mousePos;
+				y_mouseBuffer = y_mousePos;
 			}
 			break;
 		case SDL_MOUSEWHEEL:
