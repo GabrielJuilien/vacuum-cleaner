@@ -3,6 +3,7 @@
 #include "Button.h"
 #include "Tools.h"
 #include "Rect.h"
+#include "View.h"
 #include "GraphNode.h"
 
 
@@ -13,6 +14,7 @@ int main(int argc, char** argv)
 
 	static Step currentStep = Step::DRAW;
 
+	View* view = NULL;
 	Button* AddRectangleButton = NULL;
 	Button* RmvRectangleButton = NULL;
 	Button* GraphRectangleButton = NULL;
@@ -59,6 +61,7 @@ int main(int argc, char** argv)
 		RmvRectangleButton = new Button(renderer, "ressources/erase_rectangle.png", "Erase rectangle", { 200, 0, 0, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 100, 260, 100 }, switchToolToErase);
 		GraphRectangleButton = new Button(renderer, "", "Create Graph", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToCGraph);
 		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 300, 260, 420 }, switchToolToNone);
+		view = new View(renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
 	}
 	catch (const char* exception) {
 		std::cerr << exception << std::endl;
@@ -70,20 +73,20 @@ int main(int argc, char** argv)
 	}
 
 	// Drawing Zone
-	Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 301, 21);
+	/*Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 281, 21);
 	tmp = Graph;
 	for (i = 21; i <= 720; i++)
 	{
-		for (j = 301; j <= 1280; j++)
+		for (j = 281; j <= 1280; j++)
 		{
-			if (i == 21 && j == 301) j++;
+			if (i == 21 && j == 281) j++;
 			tmp = tmp->InsertNode(tmp, j, i);
 		}
-	}
+	}*/
 
 	//Main loop
 	while (currentStep != Step::QUIT) {
-		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
+		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton, view);
 	}
 
 	delete AddRectangleButton;
