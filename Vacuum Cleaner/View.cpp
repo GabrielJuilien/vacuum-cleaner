@@ -218,7 +218,6 @@ void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) 
 	}
 }
 
-
 //Destroyer
 View::~View() {
 	delete m_xScale;

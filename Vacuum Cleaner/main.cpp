@@ -73,20 +73,23 @@ int main(int argc, char** argv)
 	}
 
 	// Drawing Zone
-	/*Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 281, 21);
-	tmp = Graph;
+	Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21, 281);
 	for (i = 21; i <= 720; i++)
 	{
 		for (j = 281; j <= 1280; j++)
 		{
 			if (i == 21 && j == 281) j++;
-			tmp = tmp->InsertNode(tmp, j, i);
+			Graph->InsertNode(Graph, i, j);
 		}
-	}*/
+	}
 
 	//Main loop
 	while (currentStep != Step::QUIT) {
 		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton, view);
+
+		// Update state graph
+		//Graph->updateTypeNode(view);
+		//Graph->Resetcheck();
 	}
 
 	delete AddRectangleButton;

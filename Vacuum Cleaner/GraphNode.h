@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <cstdlib>
 
+#include "View.h"
+
 enum class NodeType { null, floor, obstacle };
 enum class NodeState { null, dirty, cleaned };
 enum class NodePosition { TOP, RIGHT, BOTTOM, LEFT };
@@ -14,12 +16,13 @@ private:
 
 	NodeType	m_type;
 	NodeState	m_state;
-	GraphNode* m_top;
-	GraphNode* m_rgt;
-	GraphNode* m_bot;
-	GraphNode* m_lft;
+	GraphNode*  m_top;
+	GraphNode*  m_rgt;
+	GraphNode*  m_bot;
+	GraphNode*  m_lft;
 	int         m_x;
 	int         m_y;
+	bool		m_check;
 
 	GraphNode();
 public:
@@ -28,12 +31,15 @@ public:
 
 	//Setters
 	void type(NodeType p_type);
+	void Resetcheck();
 	void state(NodeState p_state);
 
 	void top(GraphNode* p_node);
 	void rgt(GraphNode* p_node);
 	void bot(GraphNode* p_node);
 	void lft(GraphNode* p_node);
+
+	void check(bool p_check);
 
 	void adj(GraphNode* p_node, NodePosition p_position);
 	void adj(GraphNode* p_node, int p_position);
@@ -47,6 +53,9 @@ public:
 	GraphNode* rgt();
 	GraphNode* bot();
 	GraphNode* lft();
+
+	bool check();
+
 	int x();
 	int y();
 
@@ -56,7 +65,8 @@ public:
 	GraphNode* adj(NodePosition p_position);
 	GraphNode* adj(int p_position);
 
-	GraphNode* InsertNode(GraphNode* Graph, int x, int y);
+	void InsertNode(GraphNode* Graph, int x, int y);
+	void updateTypeNode(View* view);
 
 	// Destroyers
 	void DestroyNode();
