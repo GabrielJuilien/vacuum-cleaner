@@ -1,25 +1,30 @@
 #pragma once
+#define WIDTH_DRAW_AREA 1000
+#define HEIGHT_DRAW_AREA 620
+
 #include <cstdio>
 #include <cstdlib>
 
 enum class NodeType { null, floor, obstacle };
 enum class NodeState { null, dirty, cleaned };
-enum class NodePosition {TOP, RIGHT, BOTTOM, LEFT };
+enum class NodePosition { TOP, RIGHT, BOTTOM, LEFT };
 
 class GraphNode {
 private:
 
 	NodeType	m_type;
 	NodeState	m_state;
-	GraphNode*	m_top;
-	GraphNode*	m_rgt;
-	GraphNode*	m_bot;
-	GraphNode*	m_lft;
+	GraphNode* m_top;
+	GraphNode* m_rgt;
+	GraphNode* m_bot;
+	GraphNode* m_lft;
+	int         m_x;
+	int         m_y;
 
 	GraphNode();
 public:
 	//Constructors
-	GraphNode(NodeType p_type, NodeState p_state, GraphNode* p_top, GraphNode* p_rgt, GraphNode* p_bot, GraphNode* p_lft);
+	GraphNode(NodeType p_type, NodeState p_state, GraphNode* p_top, GraphNode* p_rgt, GraphNode* p_bot, GraphNode* p_lft, int x, int y);
 
 	//Setters
 	void type(NodeType p_type);
@@ -42,10 +47,18 @@ public:
 	GraphNode* rgt();
 	GraphNode* bot();
 	GraphNode* lft();
+	int x();
+	int y();
+
+	// Getters with options
+	GraphNode* FindNode(GraphNode* Graph, int x, int y);
 
 	GraphNode* adj(NodePosition p_position);
 	GraphNode* adj(int p_position);
 
-	//Destroyer
+	GraphNode* InsertNode(GraphNode* Graph, int x, int y);
+
+	// Destroyers
+	void DestroyNode();
 	~GraphNode();
 };

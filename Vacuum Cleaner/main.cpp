@@ -1,10 +1,9 @@
-
-
 #define _CRTDBG_MAP_ALLOC
 #include "utils.h"
 #include "Button.h"
 #include "Tools.h"
 #include "Rect.h"
+#include "GraphNode.h"
 
 
 int main(int argc, char** argv)
@@ -19,7 +18,12 @@ int main(int argc, char** argv)
 	Button* GraphRectangleButton = NULL;
 	Button* FillButton = NULL;
 
-	int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();	
+	GraphNode* Graph = NULL;
+	GraphNode* tmp = NULL;
+
+	int i, j;
+
+	int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
 	if (!SDL_WasInit(SDL_INIT_VIDEO))
 	{
@@ -65,6 +69,18 @@ int main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
+	// Drawing Zone
+	Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 301, 21);
+	tmp = Graph;
+	for (i = 21; i <= 720; i++)
+	{
+		for (j = 301; j <= 1280; j++)
+		{
+			if (i == 21 && j == 301) j++;
+			tmp = tmp->InsertNode(tmp, j, i);
+		}
+	}
+
 	//Main loop
 	while (currentStep != Step::QUIT) {
 		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
@@ -79,11 +95,16 @@ int main(int argc, char** argv)
 	delete FillButton;
 	FillButton = NULL;
 
+	// Destroy
+	Graph->DestroyNode();
+	delete Graph;
+
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);
 	TTF_Quit();
 	SDL_Quit();
 
 	_CrtDumpMemoryLeaks();
+	system("pause");
 	return EXIT_SUCCESS;
 }
