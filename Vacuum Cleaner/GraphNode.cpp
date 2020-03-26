@@ -29,24 +29,24 @@ GraphNode::GraphNode(NodeType p_type, NodeState p_state, GraphNode* p_top, Graph
 }
 
 //Setters
-void GraphNode::type(NodeType p_type) 
+void GraphNode::type(NodeType p_type, int y) 
 {
 	m_type = p_type;
+
+	if (m_y != y)
+	{
+		m_rgt->type(p_type, y);
+	}
 }
 
 void GraphNode::Resetcheck()
 {
-	if (m_bot)
-	{
-		m_bot->Resetcheck();
-	}
-	
+	m_check = false;
+
 	if (m_rgt)
 	{
 		m_rgt->Resetcheck();
 	}
-
-	m_check = false;
 }
 
 void GraphNode::state(NodeState p_state) {
@@ -268,32 +268,19 @@ void GraphNode::InsertNode(GraphNode* Graph, int x, int y)
 }
 
 // Graph management
-void GraphNode::updateTypeNode(View* view)
+void GraphNode::updateTypeNode(GraphNode*Graph, View* view)
 {
-	int i;
+	int i, j;
 
-	if (m_bot)
-	{
-		m_bot->updateTypeNode(view);
-	}
+	GraphNode* tmp;
 
-	if (m_rgt)
+	for (i = 0; i < view->drawing()->size(); i++)
 	{
-		m_rgt->updateTypeNode(view);
-	}
-
-	if (!m_check)
-	{
-		for (i = view->drawing()->size(); i <= 0; i--)
+		tmp = Graph->FindNode(Graph, view->drawing()->at(i)->x(), view->drawing()->at(i)->y());
+		for (j = view->drawing()->at(i)->x(); j < view->drawing()->at(i)->x() + view->drawing()->at(i)->h(); j++)
 		{
-			if (view->drawing()->at(i)->x() <= m_x && m_x <= view->drawing()->at(i)->x() + view->drawing()->at(i)->w())
-			{
-				if (view->drawing()->at(i)->y() <= m_y && m_y <= view->drawing()->at(i)->y() + view->drawing()->at(i)->h())
-				{
-					m_type = NodeType::floor;
-					m_check = true;
-				}
-			}
+			tmp->type(NodeType::floor, view->drawing()->at(i)->y() + view->drawing()->at(i)->w());
+			tmp = tmp->m_bot;
 		}
 	}
 }

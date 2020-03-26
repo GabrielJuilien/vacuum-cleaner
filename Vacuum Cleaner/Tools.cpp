@@ -22,13 +22,21 @@ int switchToolToNone(void* input) {
 }
 
 int switchToolToCGraph(void* input) {
-	Tool* currentTool = static_cast<Tool*>(input);
-	*currentTool = Tool::CGRAPH;
-	std::cout << "Switched tool to NONE mode.\n";
+	GraphNode* Graph = static_cast<GraphNode*>(input);
+	int i, j;
+	Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21, 281);
+	for (i = 21 * PX_SIZE; i <= 720 * PX_SIZE; i += PX_SIZE)
+	{
+		for (j = 281 * PX_SIZE; j <= 1280 * PX_SIZE; j += PX_SIZE)
+		{
+			if (i == 21 * PX_SIZE && j == 281 * PX_SIZE) j += PX_SIZE;
+			Graph->InsertNode(Graph, i / PX_SIZE, j / PX_SIZE);
+		}
+	}
 	return 0;
 }
 
-void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton, View* p_view) {
+void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton, View* p_view, GraphNode* Graph) {
 	static SDL_Event e;
 
 	static int x_mousePos, y_mousePos;
@@ -67,6 +75,15 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 							p_view->validateBuffer();
 						}
 					}
+				}
+				// Update state graph
+				if (p_view->drawing()->size())
+				{
+					std::cout << p_view->drawing()->at(0)->x() << std::endl;
+					std::cout << p_view->drawing()->at(0)->y() << std::endl;
+					std::cout << p_view->drawing()->at(0)->w() << std::endl;
+					std::cout << p_view->drawing()->at(0)->h() << std::endl;
+					//Graph->updateTypeNode(Graph, p_view);
 				}
 			}
 			else if (e.button.button == SDL_BUTTON_MIDDLE) {
