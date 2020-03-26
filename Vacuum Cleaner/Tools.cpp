@@ -22,21 +22,24 @@ int switchToolToNone(void* input) {
 }
 
 int switchToolToCGraph(void* input) {
-	GraphNode* Graph = static_cast<GraphNode*>(input);
+	GraphData* graphData = static_cast<GraphData*>(input);
+	GraphNode** Graph = graphData->m_graph;
+	std::vector<Rect*>* drawing = graphData->m_drawing;
+
 	int i, j;
-	Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21, 281);
+	*Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21, 281);
 	for (i = 21 * PX_SIZE; i <= 720 * PX_SIZE; i += PX_SIZE)
 	{
 		for (j = 281 * PX_SIZE; j <= 1280 * PX_SIZE; j += PX_SIZE)
 		{
 			if (i == 21 * PX_SIZE && j == 281 * PX_SIZE) j += PX_SIZE;
-			Graph->InsertNode(Graph, i / PX_SIZE, j / PX_SIZE);
+			(*Graph)->InsertNode(*Graph, i / PX_SIZE, j / PX_SIZE);
 		}
 	}
 	return 0;
 }
 
-void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton, View* p_view, GraphNode* Graph) {
+void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* FillButton, View* p_view, GraphData* p_graphData) {
 	static SDL_Event e;
 
 	static int x_mousePos, y_mousePos;
@@ -57,7 +60,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 			if (e.button.button == SDL_BUTTON_LEFT) {
 				if (AddRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
 				else if (RmvRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
-				else if (GraphRectangleButton->trigger(x_mousePos, y_mousePos, NULL)) break;
+				else if (GraphButton->trigger(x_mousePos, y_mousePos, p_graphData)) break;
 				else {
 					if (*currentTool == Tool::DRAW) {
 						if (!p_view->drawingBuffer()) {
@@ -194,7 +197,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		/*-----------------------*/
 	}
 
-	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton);
+	if (*currentStep != Step::QUIT) render(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, FillButton);
 	else {
 		delete p_view;
 		p_view = NULL;

@@ -6,7 +6,6 @@
 #include "View.h"
 #include "GraphNode.h"
 
-
 int main(int argc, char** argv)
 {
 	SDL_Window* window;
@@ -22,6 +21,8 @@ int main(int argc, char** argv)
 
 	GraphNode* Graph = NULL;
 	GraphNode* tmp = NULL;
+
+	GraphData* graphData = NULL;
 
 	int i, j;
 
@@ -62,6 +63,9 @@ int main(int argc, char** argv)
 		GraphRectangleButton = new Button(renderer, "", "Create Graph", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToCGraph);
 		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 300, 260, 420 }, switchToolToNone);
 		view = new View(renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
+		graphData = new GraphData();
+		graphData->m_drawing = view->drawing();
+		graphData->m_graph = &Graph;
 	}
 	catch (const char* exception) {
 		std::cerr << exception << std::endl;
@@ -77,7 +81,7 @@ int main(int argc, char** argv)
 
 	//Main loop
 	while (currentStep != Step::QUIT) {
-		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton, view, Graph);
+		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton, view, graphData);
 	}
 
 	delete AddRectangleButton;
@@ -90,7 +94,6 @@ int main(int argc, char** argv)
 	FillButton = NULL;
 
 	// Destroy
-	Graph->DestroyNode();
 	delete Graph;
 
 	SDL_DestroyRenderer(renderer);

@@ -285,26 +285,10 @@ void GraphNode::updateTypeNode(GraphNode*Graph, View* view)
 	}
 }
 
-// Destroyers
-void GraphNode::DestroyNode()
-{
-	// Destroy node 1st column
-	if (m_bot && m_y == 281)
-	{
-		m_bot->DestroyNode();
-		delete m_bot;
-		m_bot = NULL;
-	}
-
-	// Destroy rest of nodes
-	if (m_rgt)
-	{
-		m_rgt->DestroyNode();
-		delete m_rgt;
-		m_rgt = NULL;
-	}
-}
-
+// Destroyer
 GraphNode::~GraphNode() {
-
+	if (this);
+	else return;
+	if (m_rgt) delete m_rgt;
+	if (m_bot) delete m_bot;
 }
