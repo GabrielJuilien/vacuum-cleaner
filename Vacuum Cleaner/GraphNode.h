@@ -30,7 +30,7 @@ public:
 	GraphNode(NodeType p_type, NodeState p_state, GraphNode* p_top, GraphNode* p_rgt, GraphNode* p_bot, GraphNode* p_lft, int x, int y);
 
 	//Setters
-	void type(NodeType p_type);
+	void type(NodeType p_type, int y);
 	void Resetcheck();
 	void state(NodeState p_state);
 
@@ -66,7 +66,7 @@ public:
 	GraphNode* adj(int p_position);
 
 	void InsertNode(GraphNode* Graph, int x, int y);
-	void updateTypeNode(View* view);
+	void updateTypeNode(GraphNode* Graph, View* view);
 
 	// Destroyers
 	void DestroyNode();

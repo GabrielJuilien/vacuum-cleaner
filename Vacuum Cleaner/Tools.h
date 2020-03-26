@@ -1,7 +1,7 @@
 #pragma once
 #include "Button.h"
 #include "Text.h"
-#include "View.h"
+#include "GraphNode.h"
 
 enum class Tool {
 	NONE,
@@ -23,5 +23,5 @@ int switchToolToErase(void* input);
 int switchToolToNone(void* input);
 int switchToolToCGraph(void* input);
 
-void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton, View* p_view);
+void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton, View* p_view, GraphNode* Graph);
 void render(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton);
