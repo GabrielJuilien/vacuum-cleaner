@@ -222,7 +222,7 @@ void GraphNode::InsertNode(GraphNode* Graph, int x, int y)
 	GraphNode* tmp = NULL;
 
 	// Insert 1st row
-	if (x == 21)
+	if (x == 21 * PX_SIZE)
 	{
 		if (m_rgt)
 		{
@@ -234,7 +234,7 @@ void GraphNode::InsertNode(GraphNode* Graph, int x, int y)
 		}
 	}
 	// Insert 1st column
-	else if (y == 281)
+	else if (y == 281 * PX_SIZE)
 	{
 		if (m_bot)
 		{
@@ -251,14 +251,14 @@ void GraphNode::InsertNode(GraphNode* Graph, int x, int y)
 		{
 			Graph->InsertNode(m_bot, x, y);
 		}
-		else if(m_y < y - 1)
+		else if(m_y < y - PX_SIZE)
 		{
 			Graph->InsertNode(m_rgt, x, y);
 		}
 		else
 		{
 			// Search top node
-			tmp = Graph->FindNode(Graph, x - 1, y);
+			tmp = Graph->FindNode(Graph, x - PX_SIZE, y);
 			m_rgt = new GraphNode(NodeType::null, NodeState::null, tmp, NULL, NULL, Graph, x, y);
 
 			// Link between top and nod
