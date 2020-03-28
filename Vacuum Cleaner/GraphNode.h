@@ -22,24 +22,20 @@ private:
 	GraphNode*  m_lft;
 	int         m_x;
 	int         m_y;
-	bool		m_check;
 
+	//Constructors
 	GraphNode();
 public:
-	//Constructors
 	GraphNode(NodeType p_type, NodeState p_state, GraphNode* p_top, GraphNode* p_rgt, GraphNode* p_bot, GraphNode* p_lft, int x, int y);
 
 	//Setters
-	void type(NodeType p_type, int y);
-	void Resetcheck();
+	void type(NodeType p_type);
 	void state(NodeState p_state);
 
 	void top(GraphNode* p_node);
 	void rgt(GraphNode* p_node);
 	void bot(GraphNode* p_node);
 	void lft(GraphNode* p_node);
-
-	void check(bool p_check);
 
 	void adj(GraphNode* p_node, NodePosition p_position);
 	void adj(GraphNode* p_node, int p_position);
@@ -54,21 +50,20 @@ public:
 	GraphNode* bot();
 	GraphNode* lft();
 
-	bool check();
+	GraphNode* adj(NodePosition p_position);
+	GraphNode* adj(int p_position);
 
 	int x();
 	int y();
 
 	// Getters with options
-	GraphNode* FindNode(GraphNode* Graph, int x, int y);
+	/*GraphNode* FindNode(GraphNode* Graph, int x, int y);*/
 
-	GraphNode* adj(NodePosition p_position);
-	GraphNode* adj(int p_position);
 
-	void InsertNode(GraphNode* Graph, int x, int y);
-	void updateTypeNode(GraphNode* Graph, View* view);
+	/*void InsertNode(GraphNode* Graph, int x, int y);*/
+	GraphNode* seekGraph(int p_xPos, int p_yPos);
+	/*void updateTypeNode(GraphNode* Graph, View* view);*/
 
 	// Destroyers
-	void DestroyNode();
 	~GraphNode();
 };

@@ -20,7 +20,6 @@ int main(int argc, char** argv)
 	Button* FillButton = NULL;
 
 	GraphNode* Graph = NULL;
-	GraphNode* tmp = NULL;
 
 	GraphData* graphData = NULL;
 
@@ -63,6 +62,7 @@ int main(int argc, char** argv)
 		GraphRectangleButton = new Button(renderer, "", "Create Graph", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToCGraph);
 		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 300, 260, 420 }, switchToolToNone);
 		view = new View(renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
+
 		graphData = new GraphData();
 		graphData->m_drawing = view->drawing();
 		graphData->m_graph = &Graph;
@@ -89,12 +89,19 @@ int main(int argc, char** argv)
 	GraphRectangleButton = NULL;
 	delete FillButton;
 	FillButton = NULL;
+	delete graphData;
+	graphData = NULL;
 
 	// Destroy
 	if (Graph)
 	{
-		delete Graph;
+		for (i = 699; i >= 0; i--) {
+			for (j = 999; j >= 0; j--) {
+				delete Graph->seekGraph(j, i);
+			}
+		}
 	}
+
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

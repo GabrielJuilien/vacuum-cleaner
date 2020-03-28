@@ -22,25 +22,50 @@ int switchToolToNone(void* input) {
 }
 
 int switchToolToCGraph(void* input) {
+	//Loop variables
+	int i, j, k; 
+
+	//Temporary variables
+	GraphNode* tmp_node = NULL;
+	GraphNode* buffer = NULL;
+	GraphNode* left_node = NULL;
+
+	//Retrieving pointers from input
 	GraphData* graphData = static_cast<GraphData*>(input);
 	GraphNode** Graph = graphData->m_graph;
 	std::vector<Rect*>* drawing = graphData->m_drawing;
-	int i, j;
 
-	std::cout << "Switched tool to CREATE GRAPH mode." << std::endl;
+	std::cout << "Creating graph ..." << std::endl;
 
-	*Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21, 281);
-	for (i = 21 * PX_SIZE; i <= 720 * PX_SIZE; i += PX_SIZE)
-	{
-		for (j = 281 * PX_SIZE; j <= 1280 * PX_SIZE; j += PX_SIZE)
-		{
-			if (i == 21 * PX_SIZE && j == 281 * PX_SIZE) j += PX_SIZE;
-			(*Graph)->InsertNode(*Graph, i / PX_SIZE, j / PX_SIZE);
-			(*Graph)->InsertNode(*Graph, i, j);
+	for (i = 0; i < 1000 * PX_SIZE; i += PX_SIZE) {
+		for (j = 0; j < 700 * PX_SIZE; j += PX_SIZE) {
+			tmp_node = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, i, j);
+			if (i == 0 && j == 0) *Graph = tmp_node;
+
+			//Linking left node
+			if (i > 0) {
+				left_node = (*Graph)->seekGraph(i / PX_SIZE - 1, j / PX_SIZE);
+				tmp_node->lft(left_node);
+				left_node->rgt(tmp_node);
+			}
+			//Linking upper node
+			if (j > 0) {
+				tmp_node->top(buffer);
+				buffer->bot(tmp_node);
+			}
+			buffer = tmp_node;
+			for (k = drawing->size() - 1; k > 0; k--) {
+				if (drawing->at(k)->x() <= tmp_node->x() && drawing->at(k)->x() + drawing->at(k)->w() >= tmp_node->x() && drawing->at(k)->y() <= tmp_node->y() && drawing->at(k)->y() + drawing->at(k)->h() >= tmp_node->y()) {
+					if (drawing->at(k)->draw())
+						tmp_node->type(NodeType::floor);
+					break;
+				}
+			}
 		}
 	}
 
-	std::cout << "Graph created." << std::endl;
+	std::cout << "Done." << std::endl;
+
 	return 0;
 }
 
