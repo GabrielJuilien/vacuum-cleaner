@@ -76,16 +76,6 @@ int main(int argc, char** argv)
 		return EXIT_FAILURE;
 	}
 
-	Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21 * PX_SIZE, 281 * PX_SIZE);
-	for (i = 21 * PX_SIZE; i <= 720 * PX_SIZE; i += PX_SIZE)
-	{
-		for (j = 281 * PX_SIZE; j <= 1280 * PX_SIZE; j += PX_SIZE)
-		{
-			if (i == 21 * PX_SIZE && j == 281 * PX_SIZE) j += PX_SIZE;
-			Graph->InsertNode(Graph, i, j);
-		}
-	}
-
 	//Main loop
 	while (currentStep != Step::QUIT) {
 		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton, view, graphData);
@@ -101,15 +91,10 @@ int main(int argc, char** argv)
 	FillButton = NULL;
 
 	// Destroy
-<<<<<<< Updated upstream
-	delete Graph;
-=======
 	if (Graph)
 	{
-		Graph->DestroyNode();
 		delete Graph;
 	}
->>>>>>> Stashed changes
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

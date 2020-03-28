@@ -22,35 +22,25 @@ int switchToolToNone(void* input) {
 }
 
 int switchToolToCGraph(void* input) {
-<<<<<<< Updated upstream
 	GraphData* graphData = static_cast<GraphData*>(input);
 	GraphNode** Graph = graphData->m_graph;
 	std::vector<Rect*>* drawing = graphData->m_drawing;
-
-	int i, j;
-	*Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21, 281);
-=======
-	/*GraphNode* Graph = static_cast<GraphNode*>(input);
 	int i, j;
 
 	std::cout << "Switched tool to CREATE GRAPH mode." << std::endl;
 
-	Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21 * PX_SIZE, 281 * PX_SIZE);
->>>>>>> Stashed changes
+	*Graph = new GraphNode(NodeType::null, NodeState::null, NULL, NULL, NULL, NULL, 21, 281);
 	for (i = 21 * PX_SIZE; i <= 720 * PX_SIZE; i += PX_SIZE)
 	{
 		for (j = 281 * PX_SIZE; j <= 1280 * PX_SIZE; j += PX_SIZE)
 		{
 			if (i == 21 * PX_SIZE && j == 281 * PX_SIZE) j += PX_SIZE;
-<<<<<<< Updated upstream
 			(*Graph)->InsertNode(*Graph, i / PX_SIZE, j / PX_SIZE);
-=======
-			Graph->InsertNode(Graph, i, j);
->>>>>>> Stashed changes
+			(*Graph)->InsertNode(*Graph, i, j);
 		}
 	}
 
-	std::cout << "Graph created." << std::endl;*/
+	std::cout << "Graph created." << std::endl;
 	return 0;
 }
 
