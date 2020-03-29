@@ -167,8 +167,8 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Drawing.cpp" />
     <ClCompile Include="Rect.cpp" />
+    <ClCompile Include="Robot.cpp" />
     <ClCompile Include="Scale.cpp" />
     <ClCompile Include="Tools.cpp" />
     <ClCompile Include="Text.cpp" />
@@ -176,11 +176,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
-    <ClInclude Include="Drawing.h" />
     <ClInclude Include="GraphNode.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Rect.h" />
+    <ClInclude Include="Robot.h" />
     <ClInclude Include="Scale.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Tools.h" />

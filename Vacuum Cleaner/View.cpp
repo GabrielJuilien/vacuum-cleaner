@@ -213,9 +213,9 @@ void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) 
 	if (m_xScale && m_yScale) {
 		int x_mousePos, y_mousePos;
 		SDL_GetMouseState(&x_mousePos, &y_mousePos);
-		if (x_mousePos > p_xParentPos + m_viewer->x() && x_mousePos < p_xParentPos + m_viewer->x() + m_viewer->w() && y_mousePos > p_yParentPos + m_viewer->y() && y_mousePos < p_yParentPos + m_viewer->y() + m_viewer->h()) {
-			m_lineX->coord(x_mousePos, p_yParentPos + m_viewer->y(), x_mousePos, y_mousePos);
-			m_lineY->coord(p_xParentPos + m_viewer->x(), y_mousePos, x_mousePos, y_mousePos);
+		if (x_mousePos > x() + m_viewer->x() && x_mousePos < x() + m_viewer->x() + m_viewer->w() && y_mousePos > y() + m_viewer->y() && y_mousePos < y() + m_viewer->y() + m_viewer->h()) {
+			m_lineX->coord(x_mousePos, y() + m_viewer->y(), x_mousePos, y_mousePos);
+			m_lineY->coord(x() + m_viewer->x(), y_mousePos, x_mousePos, y_mousePos);
 			m_lineX->render(p_renderer, 0, 0);
 			m_lineY->render(p_renderer, 0, 0);
 		}

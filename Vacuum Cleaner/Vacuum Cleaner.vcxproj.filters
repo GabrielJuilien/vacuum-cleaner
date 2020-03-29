@@ -13,6 +13,18 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers sources\Display elements">
+      <UniqueIdentifier>{04bc7f0b-dc46-49de-986e-6bae7e83e94b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\Display elements">
+      <UniqueIdentifier>{288f87ee-1f1a-4c3b-beda-2365d0a5cb0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\AI elements">
+      <UniqueIdentifier>{9c123a1c-ee32-445d-9e5f-1b1b30a1806f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\AI elements">
+      <UniqueIdentifier>{552ee4c3-fc80-4bae-8297-0b5e824b2005}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GraphNode.cpp">
@@ -22,31 +34,31 @@
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="Button.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Display elements</Filter>
     </ClCompile>
     <ClCompile Include="Image.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Tools.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Drawing.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Rect.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="View.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="Scale.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Display elements</Filter>
     </ClCompile>
     <ClCompile Include="Line.cpp">
-      <Filter>Fichiers sources</Filter>
+      <Filter>Fichiers sources\Display elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Scale.cpp">
+      <Filter>Fichiers sources\Display elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Rect.cpp">
+      <Filter>Fichiers sources\Display elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Fichiers sources\Display elements</Filter>
+    </ClCompile>
+    <ClCompile Include="View.cpp">
+      <Filter>Fichiers sources\Display elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools.cpp">
+      <Filter>Fichiers sources\Display elements</Filter>
+    </ClCompile>
+    <ClCompile Include="Robot.cpp">
+      <Filter>Fichiers sources\AI elements</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -56,32 +68,32 @@
     <ClInclude Include="utils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Button.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Image.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
     <ClInclude Include="Tools.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
-    <ClInclude Include="Drawing.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="Button.h">
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
     </ClInclude>
-    <ClInclude Include="Rect.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="View.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Scale.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+    <ClInclude Include="Image.h">
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
     </ClInclude>
     <ClInclude Include="Line.h">
-      <Filter>Fichiers d%27en-tête</Filter>
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Scale.h">
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
+    </ClInclude>
+    <ClInclude Include="View.h">
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Robot.h">
+      <Filter>Fichiers d%27en-tête\AI elements</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
