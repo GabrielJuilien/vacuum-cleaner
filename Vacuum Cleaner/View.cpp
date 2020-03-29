@@ -190,31 +190,35 @@ void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) 
 	//Rendering drawing
 	for (int i = 0; i < m_drawing->size(); i++) {
 		if (m_drawing->at(i)->draw())
-			m_drawing->at(i)->render(p_renderer, { 100, 100, 255, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
+			m_drawing->at(i)->render(p_renderer, { 100, 100, 255, 0 }, m_viewCenter, x() + m_viewer->x(), y() + m_viewer->y(), m_zoom);
 		else
-			m_drawing->at(i)->render(p_renderer, { 255, 255, 255, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
+			m_drawing->at(i)->render(p_renderer, { 255, 255, 255, 0 }, m_viewCenter, x() + m_viewer->x(), y() + m_viewer->y(), m_zoom);
 	}
 
 	//Rendering currently-drawn rectangle
 	if (m_drawingBuffer) {
 		if (m_drawingBuffer->draw())
-			m_drawingBuffer->render(p_renderer, { 125, 125, 255, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
+			m_drawingBuffer->render(p_renderer, { 125, 125, 255, 0 }, m_viewCenter, x() + m_viewer->x(), y() + m_viewer->y(), m_zoom);
 		else
-			m_drawingBuffer->render(p_renderer, { 125, 125, 125, 0 }, m_viewCenter, p_xParentPos + m_viewer->x(), p_yParentPos + m_viewer->y(), m_zoom);
+			m_drawingBuffer->render(p_renderer, { 125, 125, 125, 0 }, m_viewCenter, x() + m_viewer->x(), y() + m_viewer->y(), m_zoom);
 	}
 
 	//Rendering scales
-	m_xScale->render(p_renderer, p_xParentPos + x(), p_yParentPos + y());
-	m_yScale->render(p_renderer, p_xParentPos + x(), p_yParentPos + y());
+	if (m_xScale)
+		m_xScale->render(p_renderer, p_xParentPos + x(), p_yParentPos + y());
+	if (m_yScale)
+		m_yScale->render(p_renderer, p_xParentPos + x(), p_yParentPos + y());
 
 	//Rendering dotted lines to current position
-	int x_mousePos, y_mousePos;
-	SDL_GetMouseState(&x_mousePos, &y_mousePos);
-	if (x_mousePos > p_xParentPos + m_viewer->x() && x_mousePos < p_xParentPos + m_viewer->x() + m_viewer->w() && y_mousePos > p_yParentPos + m_viewer->y() && y_mousePos < p_yParentPos + m_viewer->y() + m_viewer->h()) {
-		m_lineX->coord(x_mousePos, p_yParentPos + m_viewer->y(), x_mousePos, y_mousePos);
-		m_lineY->coord(p_xParentPos + m_viewer->x(), y_mousePos, x_mousePos, y_mousePos);
-		m_lineX->render(p_renderer, 0, 0);
-		m_lineY->render(p_renderer, 0, 0);
+	if (m_xScale && m_yScale) {
+		int x_mousePos, y_mousePos;
+		SDL_GetMouseState(&x_mousePos, &y_mousePos);
+		if (x_mousePos > p_xParentPos + m_viewer->x() && x_mousePos < p_xParentPos + m_viewer->x() + m_viewer->w() && y_mousePos > p_yParentPos + m_viewer->y() && y_mousePos < p_yParentPos + m_viewer->y() + m_viewer->h()) {
+			m_lineX->coord(x_mousePos, p_yParentPos + m_viewer->y(), x_mousePos, y_mousePos);
+			m_lineY->coord(p_xParentPos + m_viewer->x(), y_mousePos, x_mousePos, y_mousePos);
+			m_lineX->render(p_renderer, 0, 0);
+			m_lineY->render(p_renderer, 0, 0);
+		}
 	}
 }
 

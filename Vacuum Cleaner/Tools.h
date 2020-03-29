@@ -11,14 +11,12 @@ enum class Tool {
 };
 
 enum class Step {
-	HOME,
 	DRAW,
-	SIMULATION_LOADING,
 	SIMULATION_RENDERING,
 	QUIT
 };
 
-typedef struct GraphData {
+struct GraphData {
 	GraphNode** m_graph;
 	std::vector<Rect*>* m_drawing;
 };
@@ -29,4 +27,4 @@ int switchToolToNone(void* input);
 int switchToolToCGraph(void* input);
 
 void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton, View* p_view, GraphData* p_graphData);
-void render(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* FillButton);
+void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* FillButton);

@@ -31,10 +31,12 @@ public:
 	void setXScaleBeginValue(float p_beginValue);
 	void setXScaleEndValue(float p_endValue);
 	void setXScaleValues(float p_beginValue, float p_endValue);
+	void xScale(Scale* p_scale) { m_xScale = p_scale; }
 
 	void setYScaleBeginValue(float p_beginValue);
 	void setYScaleEndValue(float p_endValue);
 	void setYScaleValues(float p_beginValue, float p_endValue);
+	void yScale(Scale* p_scale) { m_yScale = p_scale; }
 
 	void moveCenter(int p_xDisplacement, int p_yDisplacement);						//both arguments are in pixels
 	void zoom(float p_step, int p_xMousePos, int p_yMousePos);

@@ -61,7 +61,10 @@ int main(int argc, char** argv)
 		RmvRectangleButton = new Button(renderer, "ressources/erase_rectangle.png", "Erase rectangle", { 200, 0, 0, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 100, 260, 100 }, switchToolToErase);
 		GraphRectangleButton = new Button(renderer, "", "Create Graph", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToCGraph);
 		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 300, 260, 420 }, switchToolToNone);
+		
 		view = new View(renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
+		view->x(260);
+		view->y(0);
 
 		graphData = new GraphData();
 		graphData->m_drawing = view->drawing();
@@ -77,8 +80,11 @@ int main(int argc, char** argv)
 	}
 
 	//Main loop
-	while (currentStep != Step::QUIT) {
+	while (currentStep == Step::DRAW) {
 		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton, view, graphData);
+	}
+	while (currentStep == Step::SIMULATION_RENDERING) {
+		handler(renderer, &currentStep, NULL, NULL, NULL, NULL, view, graphData);
 	}
 
 	delete AddRectangleButton;
