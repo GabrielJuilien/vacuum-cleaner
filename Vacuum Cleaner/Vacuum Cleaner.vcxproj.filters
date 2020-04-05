@@ -60,15 +60,15 @@
     <ClCompile Include="Robot.cpp">
       <Filter>Fichiers sources\AI elements</Filter>
     </ClCompile>
+    <ClCompile Include="RobotNode.cpp">
+      <Filter>Fichiers sources\AI elements</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphNode.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Fichiers d%27en-tête</Filter>
-    </ClInclude>
-    <ClInclude Include="Tools.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
@@ -93,6 +93,12 @@
       <Filter>Fichiers d%27en-tête\Display elements</Filter>
     </ClInclude>
     <ClInclude Include="Robot.h">
+      <Filter>Fichiers d%27en-tête\AI elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools.h">
+      <Filter>Fichiers d%27en-tête\Display elements</Filter>
+    </ClInclude>
+    <ClInclude Include="RobotNode.h">
       <Filter>Fichiers d%27en-tête\AI elements</Filter>
     </ClInclude>
   </ItemGroup>

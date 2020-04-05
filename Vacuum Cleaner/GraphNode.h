@@ -56,13 +56,8 @@ public:
 	int x();
 	int y();
 
-	// Getters with options
-	/*GraphNode* FindNode(GraphNode* Graph, int x, int y);*/
-
-
-	/*void InsertNode(GraphNode* Graph, int x, int y);*/
+	//Graph management
 	GraphNode* seekGraph(int p_xPos, int p_yPos);
-	/*void updateTypeNode(GraphNode* Graph, View* view);*/
 
 	// Destroyers
 	~GraphNode();
