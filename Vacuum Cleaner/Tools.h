@@ -1,7 +1,9 @@
 #pragma once
 #include "Button.h"
 #include "Text.h"
-#include "GraphNode.h"
+#include "Robot.h"
+#include <thread>
+#include <future>
 
 enum class Tool {
 	NONE,
@@ -17,6 +19,9 @@ enum class Step {
 };
 
 struct GraphData {
+	Robot** m_robot;
+	SDL_Point m_startingPoint;
+
 	GraphNode** m_graph;
 	std::vector<Rect*>* m_drawing;
 };

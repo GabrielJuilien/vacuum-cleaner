@@ -21,9 +21,9 @@ int switchToolToNone(void* input) {
 	return 0;
 }
 
-int switchToolToCGraph(void* input) {
+void createGraph(void* input) {
 	//Loop variables
-	int i, j, k; 
+	int i, j, k;
 
 	//Temporary variables
 	GraphNode* tmp_node = NULL;
@@ -63,10 +63,21 @@ int switchToolToCGraph(void* input) {
 			}
 		}
 	}
+}
 
-	std::cout << "Done." << std::endl;
+void createRobot(void* input) {
+	GraphData* graphData = static_cast<GraphData*>(input);
+	Robot** robot = graphData->m_robot;
 
-	return 0;
+	*robot = new Robot(NULL, 15, 15);
+	(*robot)->currentPosition((*robot)->currentPosition()->seekGraph(graphData->m_startingPoint.x, graphData->m_startingPoint.y));
+}
+
+int switchToolToCGraph(void* input) {
+	std::thread thread1(createGraph, input);
+	std::thread thread2(createRobot, input);
+	thread1.join();
+	thread2.join();
 }
 
 void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* FillButton, View* p_view, GraphData* p_graphData) {
@@ -258,9 +269,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	}
 
 	if (*currentStep == Step::DRAW) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, FillButton);
-	else if (*currentStep == Step::SIMULATION_RENDERING) {
-		drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, FillButton);
-	}
+	else if (*currentStep == Step::SIMULATION_RENDERING) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, FillButton);
 	else {
 		delete p_view;
 		p_view = NULL;

@@ -20,6 +20,7 @@ int main(int argc, char** argv)
 	Button* FillButton = NULL;
 
 	GraphNode* Graph = NULL;
+	Robot* robot = NULL;
 
 	GraphData* graphData = NULL;
 
@@ -69,6 +70,7 @@ int main(int argc, char** argv)
 		graphData = new GraphData();
 		graphData->m_drawing = view->drawing();
 		graphData->m_graph = &Graph;
+		graphData->m_robot = &robot;
 	}
 	catch (const char* exception) {
 		std::cerr << exception << std::endl;

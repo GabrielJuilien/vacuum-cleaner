@@ -149,7 +149,7 @@ RobotNode* RobotNode::seekGraph(int i, int j) {
 
 int RobotNode::evaluate(RobotNode* p_currentPos) { //WIP, evaluates only the distance, without considering all the nodes to clean around it.
 	if (m_graphNode)
-		m_evaluation = abs(p_currentPos->m_graphNode->x - m_graphNode->x) + abs(p_currentPos->m_graphNode->y - m_graphNode->y);
+		m_evaluation = abs(p_currentPos->m_graphNode->x() - m_graphNode->x()) + abs(p_currentPos->m_graphNode->y() - m_graphNode->y());
 	else
 		m_evaluation = -1;
 

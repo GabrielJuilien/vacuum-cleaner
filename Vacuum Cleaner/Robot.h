@@ -3,13 +3,17 @@
 #include "GraphNode.h"
 #include "RobotNode.h"
 
+#define ROBOT_LENGTH 30
+#define ROBOT_WIDTH 30
+
 enum class Direction {UP, DOWN, LEFT, RIGHT};
 
 class Robot {
 private:
 	std::vector<RobotNode*>* m_stack;
 	RobotNode* m_currentPosition;
-	RobotNode* m_graph;
+	RobotNode* m_graph; 
+	Direction m_direction;
 public:
 	//Constructors
 	Robot();
@@ -21,37 +25,28 @@ public:
 	void addNode(RobotNode* p_graphNode, int p_index);
 	void removeNode(RobotNode* p_graphNode);
 	void removeNode(int p_index);
+	void currentPosition(RobotNode* p_currentPos);
 	
 	//Getters
 	RobotNode* currentPosition();
 
 	//Movement management
 	float turn(Direction p_direction); //Returns time needed to turn to p_direction
-	bool forward(); //Returns false if movement is impossible
-	bool backward(); //Returns false if movement is impossible
+	bool forward(bool p_simulation); //Returns false if movement is impossible
+	bool backward(bool p_simulation); //Returns false if movement is impossible
 
 	//Captors state
-	unsigned int getFrontState();
-	unsigned int getBackState();
+	unsigned short getFrontState();
+	unsigned short getBackState();
+	unsigned short getLeftState();
+	unsigned short getRightState();
 
-	unsigned int getFullRightState();
-	unsigned int getFirstRightState();
-	unsigned int getLastRightState();
-	
-	unsigned int getFullLeftState();
-	unsigned int getFirstLeftState();
-	unsigned int getLastLeftState();
+	//Retrieve data from graph
+	void getFrontNodes();
+	void getBackNodes();
+	void getLeftNodes();
+	void getRightNodes();
 
-	//Retrieve datas from graph
-	std::vector<RobotNode*> getFrontNodes();
-	std::vector<RobotNode*> getBackNodes();
-	
-	std::vector<RobotNode*> getLeftNodes();
-	RobotNode* getFirstLeftNode();
-	RobotNode* getLastLeftNode();
-
-	std::vector<RobotNode*> getRightNodes();
-	RobotNode* getFirstRightNode();
-	RobotNode* getLastRightNode();
-
+	//Destroyer
+	~Robot();
 };
