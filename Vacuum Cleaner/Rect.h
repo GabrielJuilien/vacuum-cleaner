@@ -34,7 +34,7 @@ public:
 
 	//Display management
 	virtual void render(SDL_Renderer* p_renderer, SDL_Color p_color);
-	virtual void render(SDL_Renderer* p_renderer, SDL_Color p_color, SDL_Point p_viewCenter, int p_xParentPos, int p_yParentPos, float p_zoom);
+	virtual void render(SDL_Renderer* p_renderer, SDL_Color p_color, vec2 p_viewCenter, int p_xParentPos, int p_yParentPos, float p_zoom);
 
 	//Destroyer
 	virtual ~Rect();

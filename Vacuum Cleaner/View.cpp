@@ -80,11 +80,11 @@ void View::moveCenter(int p_xDisplacement, int p_yDisplacement) {
 	float currentTopBorderPosition = yScale()->beginValue();
 	
 	if (currentLeftBorderPosition + relativeXDisplacement >= domainLeftBorderPosition && currentRightBorderPosition + relativeXDisplacement <= domainRightBorderPosition) {
-		m_viewCenter.x += (int)relativeXDisplacement;
+		m_viewCenter.x += relativeXDisplacement;
 		xScale()->values(xScale()->beginValue() + relativeXDisplacement, xScale()->endValue() + relativeXDisplacement);
 	}
 	if (currentTopBorderPosition + relativeYDisplacement >= domainTopBorderPosition && currentBotBorderPosition + relativeYDisplacement <= domainBotBorderPosition) {
-		m_viewCenter.y += (int)relativeYDisplacement;
+		m_viewCenter.y += relativeYDisplacement;
 		yScale()->values(yScale()->beginValue() + relativeYDisplacement, yScale()->endValue() + relativeYDisplacement);
 	}
 }
@@ -99,15 +99,15 @@ void View::zoom(float p_step, int p_xMousePos, int p_yMousePos) {
 void View::setBufferOrigin(int p_xPosition, int p_yPosition, bool p_drawing, int p_xParentPos, int p_yParentPos) {
 	m_drawingBuffer = new Rect(0, 0, 0, 0, p_drawing);
 
-	float relativeXPosition = ((float)(p_xPosition - p_xParentPos) * PX_SIZE - (float)m_viewCenter.x) / m_zoom + (float)m_viewCenter.x;
-	float relativeYPosition = ((float)(p_yPosition - p_yParentPos) * PX_SIZE - (float)m_viewCenter.y) / m_zoom + (float)m_viewCenter.y;
+	float relativeXPosition = (float)(p_xPosition - p_xParentPos) * PX_SIZE / m_zoom + xScale()->beginValue();
+	float relativeYPosition = (float)(p_yPosition - p_yParentPos) * PX_SIZE / m_zoom + yScale()->beginValue();
 	m_drawingBuffer->x(relativeXPosition);
 	m_drawingBuffer->y(relativeYPosition);
 }
 
 void View::setBufferTarget(int p_xPosition, int p_yPosition, int p_xParentPos, int p_yParentPos) {
-	float relativeXPosition = ((float)(p_xPosition - p_xParentPos) * PX_SIZE - (float)m_viewCenter.x) / m_zoom + (float)m_viewCenter.x;
-	float relativeYPosition = ((float)(p_yPosition - p_yParentPos) * PX_SIZE - (float)m_viewCenter.y) / m_zoom + (float)m_viewCenter.y;
+	float relativeXPosition = (float)(p_xPosition - p_xParentPos) * PX_SIZE / m_zoom + xScale()->beginValue();
+	float relativeYPosition = (float)(p_yPosition - p_yParentPos) * PX_SIZE / m_zoom + yScale()->beginValue();
 	m_drawingBuffer->w(relativeXPosition - m_drawingBuffer->x());
 	m_drawingBuffer->h(relativeYPosition - m_drawingBuffer->y());
 }
@@ -146,7 +146,7 @@ float View::zoom() {
 	return m_zoom;
 }
 
-SDL_Point View::viewCenter() {
+vec2 View::viewCenter() {
 	return m_viewCenter;
 }
 
@@ -159,12 +159,14 @@ Rect* View::drawingBuffer() {
 }
 
 //Display management
-void View::updateXText(std::string p_text, int p_xParentPos, int p_yParentPos) {
-
+void View::updateXText(int p_xParentPos, int p_yParentPos) {
+	m_drawingTextX->text(std::to_string(m_drawingBuffer->w()));
+	m_drawingTextX->destination(((float)(m_drawingBuffer->x() - m_viewCenter.x) * m_zoom + 1000.0f) / PX_SIZE + m_drawingBuffer->w() * m_zoom / PX_SIZE / 2 - m_drawingTextX->x_size() / 2, (float)((m_drawingBuffer->y() - m_viewCenter.y) * m_zoom + 700.0f) / PX_SIZE + m_drawingBuffer->h() * m_zoom / PX_SIZE);
 }
 
-void View::updateYText(std::string p_text, int p_xParentPos, int p_yParentPos) {
-
+void View::updateYText(int p_xParentPos, int p_yParentPos) {
+	m_drawingTextY->text(std::to_string(m_drawingBuffer->h()));
+	m_drawingTextY->destination(((float)(m_drawingBuffer->x() - m_viewCenter.x) * m_zoom + 1000.0f) / PX_SIZE + m_drawingBuffer->w() * m_zoom / PX_SIZE, (float)((m_drawingBuffer->y() - m_viewCenter.y) * m_zoom + 700.0f) / PX_SIZE + m_drawingBuffer->h() * m_zoom / PX_SIZE / 2 - m_drawingTextY->y_size() / 2);
 }
 
 void View::updateXScale(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
@@ -201,6 +203,8 @@ void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) 
 			m_drawingBuffer->render(p_renderer, { 125, 125, 255, 0 }, m_viewCenter, x() + m_viewer->x(), y() + m_viewer->y(), m_zoom);
 		else
 			m_drawingBuffer->render(p_renderer, { 125, 125, 125, 0 }, m_viewCenter, x() + m_viewer->x(), y() + m_viewer->y(), m_zoom);
+		m_drawingTextX->render(x() + m_viewer->x(), y() + m_viewer->y());
+		m_drawingTextY->render(x() + m_viewer->x(), y() + m_viewer->y());
 	}
 
 	//Rendering scales

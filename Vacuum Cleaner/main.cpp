@@ -17,6 +17,7 @@ int main(int argc, char** argv)
 	Button* AddRectangleButton = NULL;
 	Button* RmvRectangleButton = NULL;
 	Button* GraphRectangleButton = NULL;
+	Button* SetRobotPosButton = NULL;
 	Button* FillButton = NULL;
 
 	GraphNode* Graph = NULL;
@@ -61,7 +62,9 @@ int main(int argc, char** argv)
 		AddRectangleButton = new Button(renderer, "ressources/draw_rectangle.png", "Draw rectangle", { 0, 150, 0, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 0, 260, 100 }, switchToolToDraw);
 		RmvRectangleButton = new Button(renderer, "ressources/erase_rectangle.png", "Erase rectangle", { 200, 0, 0, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 100, 260, 100 }, switchToolToErase);
 		GraphRectangleButton = new Button(renderer, "", "Create Graph", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToCGraph);
-		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 300, 260, 420 }, switchToolToNone);
+		SetRobotPosButton = new Button(renderer, "ressources/robot_icon.png", "Place robot", { 0, 200, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 300, 260, 100 }, switchToolToPlaceRobot);
+
+		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 400, 260, 420 }, switchToolToNone);
 		
 		view = new View(renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
 		view->x(260);
@@ -83,10 +86,10 @@ int main(int argc, char** argv)
 
 	//Main loop
 	while (currentStep == Step::DRAW) {
-		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, FillButton, view, graphData);
+		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, SetRobotPosButton, FillButton, view, graphData);
 	}
 	while (currentStep == Step::SIMULATION_RENDERING) {
-		handler(renderer, &currentStep, NULL, NULL, NULL, NULL, view, graphData);
+		handler(renderer, &currentStep, NULL, NULL, NULL, NULL, NULL, view, graphData);
 	}
 
 	delete AddRectangleButton;
@@ -95,6 +98,8 @@ int main(int argc, char** argv)
 	RmvRectangleButton = NULL;
 	delete GraphRectangleButton;
 	GraphRectangleButton = NULL;
+	delete SetRobotPosButton;
+	SetRobotPosButton = NULL;
 	delete FillButton;
 	FillButton = NULL;
 	delete graphData;

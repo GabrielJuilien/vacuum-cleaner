@@ -85,7 +85,7 @@ void Scale::generateTextures(SDL_Renderer* p_renderer, int p_xParentPos, int p_y
 					texture = SDL_CreateTextureFromSurface(p_renderer, surface);
 					SDL_QueryTexture(texture, NULL, NULL, &texture_w, &texture_h);
 
-					SDL_Rect* tmp = new SDL_Rect({static_cast<int>((float)(x() + p_xParentPos) + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h() - texture_w / 2.0f),  y() + p_yParentPos - 1, texture_w, texture_h });
+					SDL_Rect* tmp = new SDL_Rect({static_cast<int>((float)(x() + p_xParentPos) + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h() - texture_w / 2),  static_cast<int>(y() + p_yParentPos - 1), texture_w, texture_h });
 
 					m_digits->push_back(texture);
 					m_digitsPosition->push_back(tmp);

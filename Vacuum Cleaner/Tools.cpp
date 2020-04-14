@@ -14,6 +14,13 @@ int switchToolToErase(void* input) {
 	return 0;
 }
 
+int switchToolToPlaceRobot(void* input) {
+	Tool* currentTool = static_cast<Tool*>(input);
+	*currentTool = Tool::ROBOT;
+	std::cout << "Switch tool to PLACE ROBOT.\n";
+	return 0;
+}
+
 int switchToolToNone(void* input) {
 	Tool* currentTool = static_cast<Tool*>(input);
 	*currentTool = Tool::NONE;
@@ -78,9 +85,10 @@ int switchToolToCGraph(void* input) {
 	std::thread thread2(createRobot, input);
 	thread1.join();
 	thread2.join();
+	return 0;
 }
 
-void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* FillButton, View* p_view, GraphData* p_graphData) {
+void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* SetRobotPosButton, Button* FillButton, View* p_view, GraphData* p_graphData) {
 	static SDL_Event e;
 
 	static int x_mousePos, y_mousePos;
@@ -102,6 +110,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 				if (e.button.button == SDL_BUTTON_LEFT) {
 					if (AddRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
 					else if (RmvRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
+					else if (SetRobotPosButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
 					else if (GraphButton->trigger(x_mousePos, y_mousePos, p_graphData)) {
 
 						p_view->discardBuffer();
@@ -128,6 +137,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 						else if (*currentTool == Tool::ERASE) {
 							if (!p_view->drawingBuffer()) {
 								p_view->setBufferOrigin(x_mousePos, y_mousePos, false, 280, 20);
+
 							}
 							else {
 								p_view->validateBuffer();
@@ -157,6 +167,9 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 				SDL_GetMouseState(&x_mousePos, &y_mousePos);
 				if (p_view->drawingBuffer()) {
 					p_view->setBufferTarget(x_mousePos, y_mousePos, 280, 20);
+					p_view->updateXText(280, 20);
+					p_view->updateYText(280, 20);
+
 				}
 				if (wheelClick) {
 					p_view->moveCenter(x_mouseBuffer - x_mousePos, y_mouseBuffer - y_mousePos);
@@ -268,8 +281,8 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		}
 	}
 
-	if (*currentStep == Step::DRAW) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, FillButton);
-	else if (*currentStep == Step::SIMULATION_RENDERING) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, FillButton);
+	if (*currentStep == Step::DRAW) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, SetRobotPosButton, FillButton);
+	else if (*currentStep == Step::SIMULATION_RENDERING) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, SetRobotPosButton, FillButton);
 	else {
 		delete p_view;
 		p_view = NULL;
@@ -278,7 +291,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 	}
 }
 
-void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* FillButton) {
+void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* SetRobotPosButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 	static int x, y;
 	currentFrame = SDL_GetTicks();
@@ -290,6 +303,7 @@ void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, But
 		if (AddRectangleButton) AddRectangleButton->render();
 		if (RmvRectangleButton) RmvRectangleButton->render();
 		if (GraphRectangleButton) GraphRectangleButton->render();
+		if (SetRobotPosButton) SetRobotPosButton->render();
 		if (FillButton) FillButton->render();
 		SDL_RenderPresent(p_renderer);
 		lastFrame += 1000 / FRAMERATE;

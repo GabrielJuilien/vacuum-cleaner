@@ -12,7 +12,7 @@ private:
 	Rect* m_viewer;
 
 	float m_zoom;
-	SDL_Point m_viewCenter;
+	vec2 m_viewCenter;
 
 	std::vector<Rect*>* m_drawing;
 	Rect* m_drawingBuffer;
@@ -51,13 +51,13 @@ public:
 	Scale* yScale();
 	Rect* viewer();
 	float zoom();
-	SDL_Point viewCenter();
+	vec2 viewCenter();
 	std::vector<Rect*>* drawing();
 	Rect* drawingBuffer();
 
 	//Display management
-	void updateXText(std::string p_text, int p_xParentPos, int p_yParentPos);
-	void updateYText(std::string p_text, int p_xParentPos, int p_yParentPos);
+	void updateXText(int p_xParentPos, int p_yParentPos);
+	void updateYText(int p_xParentPos, int p_yParentPos);
 
 	void updateXScale(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos);
 	void updateYScale(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos);
