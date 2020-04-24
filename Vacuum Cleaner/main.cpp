@@ -74,6 +74,8 @@ int main(int argc, char** argv)
 		graphData->m_drawing = view->drawing();
 		graphData->m_graph = &Graph;
 		graphData->m_robot = &robot;
+		graphData->m_startingPoint.x = 0;
+		graphData->m_startingPoint.y = 0;
 	}
 	catch (const char* exception) {
 		std::cerr << exception << std::endl;

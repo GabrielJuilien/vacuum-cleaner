@@ -141,7 +141,7 @@ void Scale::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos)
 		for (i = m_beginValue; i < m_endValue; i += (m_endValue - m_beginValue) / (w() - h())) {
 			if (buffer >= m_step) {
 				SDL_RenderDrawLine(p_renderer, (float)(x() + p_xParentPos) + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h(), y() + p_yParentPos + h() - 6, x() + p_xParentPos + (i - m_beginValue) * (w() - h()) / (m_endValue - m_beginValue) + h(), y() + p_yParentPos + h());
-				buffer = 0;
+				buffer -= m_step;
 			}
 			buffer += (m_endValue - m_beginValue) / (w() - h());
 		}

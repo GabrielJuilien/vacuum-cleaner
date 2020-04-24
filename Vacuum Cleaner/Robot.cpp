@@ -8,8 +8,10 @@ Robot::Robot() {
 	m_direction = Direction::UP;
 }
 
-Robot::Robot(GraphNode* p_currentPosition, int p_width, int p_height) {
+Robot::Robot(int p_width, int p_height) {
 	m_stack = new std::vector<RobotNode*>();
+	m_graph = NULL;
+	m_currentPosition = NULL;
 	
 	int i, j;
 
@@ -39,7 +41,6 @@ Robot::Robot(GraphNode* p_currentPosition, int p_width, int p_height) {
 		}
 	}
 
-	m_currentPosition = m_graph;
 	m_direction = Direction::UP;
 }
 

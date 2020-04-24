@@ -17,7 +17,7 @@ private:
 public:
 	//Constructors
 	Robot();
-	Robot(GraphNode* p_currentPosition, int p_width, int p_height);
+	Robot(int p_width, int p_height);
 
 	//Setters
 	void clearStack();

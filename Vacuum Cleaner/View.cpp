@@ -16,6 +16,9 @@ View::View() : Rect(0, 0, 0, 0, false) {
 
 	m_lineX = NULL;
 	m_lineY = NULL;
+
+	m_robotImage = NULL;
+	m_robotPosition = { 0, 0 };
 }
 
 View::View(SDL_Renderer* p_renderer, Rect p_xScale, Rect p_yScale, Rect p_viewer) : Rect(p_yScale.x(), p_xScale.y(), p_viewer.w() + p_yScale.w(), p_viewer.h() + p_xScale.h(), false) {
@@ -39,6 +42,10 @@ View::View(SDL_Renderer* p_renderer, Rect p_xScale, Rect p_yScale, Rect p_viewer
 	m_drawingTextY = new Text("", p_renderer, { 0, 0, 0, 0 }, 14, 0, 0);
 	m_lineX = new Line(0, 0, 0, 0, { 0, 0, 0, 0 }, false);
 	m_lineY = new Line(0, 0, 0, 0, { 0, 0, 0, 0 }, false);
+
+	//Loading robot image
+	m_robotImage = new Image(p_renderer, "ressources/robot.png", -500, -500);
+	m_robotPosition = { -500, -500 };
 }
 
 //Setters
@@ -128,6 +135,12 @@ void View::validateBuffer() {
 	m_drawingTextY->text("");
 }
 
+void View::setRobotPosition(int p_xPosition, int p_yPosition) {
+	m_robotPosition.x = (float)(p_xPosition + xScale()->beginValue() - 280.0f) * PX_SIZE / m_zoom;
+	m_robotPosition.y = (float)(p_yPosition + yScale()->beginValue() - 20.0f) * PX_SIZE / m_zoom;
+}
+
+
 
 //Getters
 Scale* View::xScale() {
@@ -187,6 +200,15 @@ void View::updateScales(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParen
 	m_yScale->generateTextures(p_renderer, p_xParentPos + x(), p_yParentPos + y());
 }
 
+void View::updateRobotImage() {
+	int a = 280 + (m_robotPosition.x - m_xScale->beginValue()) / PX_SIZE * m_zoom;
+	int b = 20 + (m_robotPosition.y - m_yScale->beginValue()) / PX_SIZE * m_zoom;
+	int c = 30 * m_zoom;
+	int d = 30 * m_zoom;
+	m_robotImage->destination({a, b, c, d});
+}
+
+
 void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) {
 
 	//Rendering drawing
@@ -205,6 +227,12 @@ void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) 
 			m_drawingBuffer->render(p_renderer, { 125, 125, 125, 0 }, m_viewCenter, x() + m_viewer->x(), y() + m_viewer->y(), m_zoom);
 		m_drawingTextX->render(x() + m_viewer->x(), y() + m_viewer->y());
 		m_drawingTextY->render(x() + m_viewer->x(), y() + m_viewer->y());
+	}
+
+	//Rendering robot
+	if (m_robotImage) {
+		updateRobotImage();
+		m_robotImage->render(-15 * m_zoom, -15 * m_zoom);
 	}
 
 	//Rendering scales
@@ -243,4 +271,5 @@ View::~View() {
 	delete m_drawingTextY;
 	delete m_lineX;
 	delete m_lineY;
+	delete m_robotImage;
 }

@@ -76,8 +76,7 @@ void createRobot(void* input) {
 	GraphData* graphData = static_cast<GraphData*>(input);
 	Robot** robot = graphData->m_robot;
 
-	*robot = new Robot(NULL, 15, 15);
-	(*robot)->currentPosition((*robot)->currentPosition()->seekGraph(graphData->m_startingPoint.x, graphData->m_startingPoint.y));
+	*robot = new Robot(15, 15);
 }
 
 int switchToolToCGraph(void* input) {
@@ -85,6 +84,9 @@ int switchToolToCGraph(void* input) {
 	std::thread thread2(createRobot, input);
 	thread1.join();
 	thread2.join();
+
+	//Linking two graphs
+	//TODO
 	return 0;
 }
 
@@ -141,6 +143,12 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 							}
 							else {
 								p_view->validateBuffer();
+							}
+						}
+						else if (*currentTool == Tool::ROBOT) {
+							if (x_mousePos >= 295 && x_mousePos <= 1265 && y_mousePos && y_mousePos >= 35 && y_mousePos <= 705) {
+								p_view->setRobotPosition(x_mousePos, y_mousePos);
+								p_view->updateRobotImage();
 							}
 						}
 					}
@@ -294,6 +302,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* SetRobotPosButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 	static int x, y;
+	static Image* robotImage = NULL;
 	currentFrame = SDL_GetTicks();
 
 	//Render loop
