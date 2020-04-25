@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
 	GraphData* graphData = NULL;
 
-	int i, j;
+	int i = 0, j;
 
 	int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
@@ -61,8 +61,8 @@ int main(int argc, char** argv)
 	try {
 		AddRectangleButton = new Button(renderer, "ressources/draw_rectangle.png", "Draw rectangle", { 0, 150, 0, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 0, 260, 100 }, switchToolToDraw);
 		RmvRectangleButton = new Button(renderer, "ressources/erase_rectangle.png", "Erase rectangle", { 200, 0, 0, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 100, 260, 100 }, switchToolToErase);
-		GraphRectangleButton = new Button(renderer, "", "Create Graph", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToCGraph);
-		SetRobotPosButton = new Button(renderer, "ressources/robot_icon.png", "Place robot", { 0, 200, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 300, 260, 100 }, switchToolToPlaceRobot);
+		SetRobotPosButton = new Button(renderer, "ressources/robot_icon.png", "Place robot", { 0, 200, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToPlaceRobot);
+		GraphRectangleButton = new Button(renderer, "ressources/create_graph.png", "Start simulation", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 300, 260, 100 }, switchToolToCGraph);
 
 		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 400, 260, 420 }, switchToolToNone);
 		
@@ -90,24 +90,24 @@ int main(int argc, char** argv)
 	while (currentStep == Step::DRAW) {
 		handler(renderer, &currentStep, AddRectangleButton, RmvRectangleButton, GraphRectangleButton, SetRobotPosButton, FillButton, view, graphData);
 	}
+
 	while (currentStep == Step::SIMULATION_RENDERING) {
-		handler(renderer, &currentStep, NULL, NULL, NULL, NULL, NULL, view, graphData);
+		i++;
+		simulation(renderer, &currentStep, graphData);
 	}
 
+
 	delete AddRectangleButton;
-	AddRectangleButton = NULL;
 	delete RmvRectangleButton;
-	RmvRectangleButton = NULL;
 	delete GraphRectangleButton;
-	GraphRectangleButton = NULL;
 	delete SetRobotPosButton;
-	SetRobotPosButton = NULL;
 	delete FillButton;
-	FillButton = NULL;
-	delete graphData;
-	graphData = NULL;
+	delete view;
 
 	// Destroy
+
+	std::thread thread1(deleteRobot, robot);
+
 	if (Graph)
 	{
 		for (i = 699; i >= 0; i--) {
@@ -117,6 +117,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	thread1.join();
 
 	SDL_DestroyRenderer(renderer);
 	SDL_DestroyWindow(window);

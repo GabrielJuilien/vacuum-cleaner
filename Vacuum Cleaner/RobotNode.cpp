@@ -156,6 +156,11 @@ int RobotNode::evaluate(RobotNode* p_currentPos) { //WIP, evaluates only the dis
 	return m_evaluation;
 }
 
+bool sortFunction(RobotNode* a, RobotNode* b) {
+	if (a->evaluation() > b->evaluation()) return true;
+	else return false;
+}
+
 //Destroyer
 RobotNode::~RobotNode() {
 

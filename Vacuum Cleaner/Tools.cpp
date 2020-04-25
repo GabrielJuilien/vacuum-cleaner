@@ -76,17 +76,29 @@ void createRobot(void* input) {
 	GraphData* graphData = static_cast<GraphData*>(input);
 	Robot** robot = graphData->m_robot;
 
-	*robot = new Robot(15, 15);
+	*robot = new Robot(1000, 700);
 }
 
 int switchToolToCGraph(void* input) {
+	int i, j;
+
 	std::thread thread1(createGraph, input);
 	std::thread thread2(createRobot, input);
 	thread1.join();
 	thread2.join();
 
 	//Linking two graphs
-	//TODO
+	GraphData* graphData = static_cast<GraphData*>(input);
+	(*(graphData->m_robot))->currentPosition((*(graphData->m_robot))->graph()->seekGraph(graphData->m_startingPoint.x / PX_SIZE, graphData->m_startingPoint.y / PX_SIZE));
+	(*(graphData->m_robot))->currentPosition()->graphNode((*(graphData->m_graph))->seekGraph(graphData->m_startingPoint.x / PX_SIZE, graphData->m_startingPoint.y / PX_SIZE));
+
+	for (i = 0; i < 15; i++) {
+		for (j = 0; j < 15; j++) {
+			(*(graphData->m_robot))->currentPosition()->seekGraph(i - 7, j - 7)->graphNode((*(graphData->m_robot))->currentPosition()->graphNode()->seekGraph(- 7 + i, - 7 + j));
+			(*(graphData->m_robot))->currentPosition()->seekGraph(i - 7, j - 7)->graphNode()->state(NodeState::cleaned);
+		}
+	}
+
 	return 0;
 }
 
@@ -146,9 +158,11 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 							}
 						}
 						else if (*currentTool == Tool::ROBOT) {
-							if (x_mousePos >= 295 && x_mousePos <= 1265 && y_mousePos && y_mousePos >= 35 && y_mousePos <= 705) {
+							if (x_mousePos >= 288 && x_mousePos <= 1272 && y_mousePos && y_mousePos >= 28 && y_mousePos <= 712) {
 								p_view->setRobotPosition(x_mousePos, y_mousePos);
+								p_graphData->m_startingPoint = p_view->robotPosition();
 								p_view->updateRobotImage();
+								switchToolToNone(currentTool);
 							}
 						}
 					}
@@ -183,6 +197,10 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 					p_view->moveCenter(x_mouseBuffer - x_mousePos, y_mouseBuffer - y_mousePos);
 					x_mouseBuffer = x_mousePos;
 					y_mouseBuffer = y_mousePos;
+				}
+				if (*currentTool == Tool::ROBOT) {
+					p_view->setRobotPosition(x_mousePos, y_mousePos);
+					p_view->updateRobotImage();
 				}
 				break;
 			case SDL_MOUSEWHEEL:
@@ -249,6 +267,14 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 							p_view->setBufferOrigin(x_mousePos, y_mousePos, false, 280, 20);
 						}
 					}
+					if (*currentTool == Tool::ROBOT) {
+						if (x_mousePos >= 288 && x_mousePos <= 1272 && y_mousePos && y_mousePos >= 28 && y_mousePos <= 712) {
+							p_view->setRobotPosition(x_mousePos, y_mousePos);
+							p_graphData->m_startingPoint = p_view->robotPosition();
+							p_view->updateRobotImage();
+							switchToolToNone(currentTool);
+						}
+					}
 					break;
 				case SDLK_ESCAPE:
 					*currentStep = Step::QUIT;
@@ -289,17 +315,10 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 		}
 	}
 
-	if (*currentStep == Step::DRAW) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, SetRobotPosButton, FillButton);
-	else if (*currentStep == Step::SIMULATION_RENDERING) drawPhaseRender(p_renderer, *currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, SetRobotPosButton, FillButton);
-	else {
-		delete p_view;
-		p_view = NULL;
-		delete currentTool;
-		currentTool = NULL;
-	}
+	drawPhaseRender(p_renderer, currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, SetRobotPosButton, FillButton);
 }
 
-void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* SetRobotPosButton, Button* FillButton) {
+void drawPhaseRender(SDL_Renderer* p_renderer, Step* currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* SetRobotPosButton, Button* FillButton) {
 	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 	static int x, y;
 	static Image* robotImage = NULL;
@@ -320,4 +339,110 @@ void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, But
 
 	//Idle wait
 	std::this_thread::sleep_for(std::chrono::milliseconds(5));
+}
+
+
+void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData) {
+	int i;
+
+	static Robot* p_robot = *(p_graphData->m_robot);
+	
+	static SDL_Event e;
+	static bool update_view = true;
+
+	while (SDL_PollEvent(&e)) {
+		switch (e.type) {
+		case SDL_QUIT:
+			*p_currentStep = Step::QUIT;
+			break;
+		case SDL_KEYDOWN:
+			switch (e.key.keysym.sym) {
+			case SDLK_SPACE:
+				update_view = true;
+				break;
+			case SDLK_ESCAPE:
+				*p_currentStep = Step::QUIT;
+				break;
+			}
+		}
+	}
+
+	p_robot->evaluateStack();
+	p_robot->sortStack();
+
+
+	if (update_view)
+		simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
+	else
+		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+	update_view = false;
+}
+
+void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData) {
+	SDL_SetRenderDrawColor(p_renderer, 200, 200, 200, 0);
+	SDL_RenderClear(p_renderer);
+
+	int i, j;
+ 	RobotNode* tmp = NULL;
+	RobotNode* tmp2 = NULL;
+
+	static SDL_Texture* robotTexture = SDL_CreateTextureFromSurface(p_renderer, IMG_Load("ressources/robot.png"));
+	static SDL_Rect destination = { 0, 0, 30, 30 };
+	static SDL_Point center = { 15, 15 };
+
+	tmp = (*(p_graphData->m_robot))->graph();
+	for (i = 0; i < 1000; i++) {
+		tmp2 = tmp->right();
+		for (j = 0; j < 700; j++) {
+			if (tmp->graphNode()) {
+				switch (tmp->graphNode()->state())
+				{
+				case NodeState::null:
+					SDL_SetRenderDrawColor(p_renderer, 255, 255, 255, 0);
+					SDL_RenderDrawPoint(p_renderer, i + 280, j + 20);
+					break;
+				case NodeState::dirty:
+					SDL_SetRenderDrawColor(p_renderer, 100, 100, 255, 0);
+					SDL_RenderDrawPoint(p_renderer, i + 280, j + 20);
+					break;
+				case NodeState::cleaned:
+					SDL_SetRenderDrawColor(p_renderer, 125, 125, 255, 0);
+					SDL_RenderDrawPoint(p_renderer, i + 280, j + 20);
+					break;
+				default:
+					break;
+				}
+			}
+			tmp = tmp->bot();
+		}
+		tmp = tmp2;
+	}
+
+	destination = { (*(p_graphData->m_robot))->currentPosition()->graphNode()->x() / PX_SIZE + 280 - 7, (*(p_graphData->m_robot))->currentPosition()->graphNode()->y() / PX_SIZE + 20 - 7, 15, 15 };
+
+	switch ((*(p_graphData->m_robot))->direction()) {
+	case Direction::UP:
+		SDL_RenderCopy(p_renderer, robotTexture, NULL, &destination);
+		break;
+	case Direction::RIGHT:
+		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 90, &center, SDL_FLIP_NONE);
+		break;
+	case Direction::DOWN:
+		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 180, &center, SDL_FLIP_NONE);
+		break;
+	case Direction::LEFT:
+		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 270, &center, SDL_FLIP_NONE);
+		break;
+	}
+
+	SDL_RenderPresent(p_renderer);
+}
+
+void deleteGraph(GraphNode* p_graph) {
+	delete p_graph;
+}
+
+void deleteRobot(Robot* p_robot) {
+	delete p_robot;
 }

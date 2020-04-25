@@ -2,6 +2,7 @@
 
 #include "GraphNode.h"
 #include "RobotNode.h"
+#include <algorithm>
 
 #define ROBOT_LENGTH 30
 #define ROBOT_WIDTH 30
@@ -20,15 +21,12 @@ public:
 	Robot(int p_width, int p_height);
 
 	//Setters
-	void clearStack();
-	void addNode(RobotNode* p_graphNode);
-	void addNode(RobotNode* p_graphNode, int p_index);
-	void removeNode(RobotNode* p_graphNode);
-	void removeNode(int p_index);
 	void currentPosition(RobotNode* p_currentPos);
 	
 	//Getters
 	RobotNode* currentPosition();
+	RobotNode* graph();
+	Direction direction();
 
 	//Movement management
 	float turn(Direction p_direction); //Returns time needed to turn to p_direction
@@ -46,6 +44,16 @@ public:
 	void getBackNodes();
 	void getLeftNodes();
 	void getRightNodes();
+
+	//Stack management
+	void addNode(RobotNode* p_graphNode);
+	void addNode(RobotNode* p_graphNode, int p_index);
+	int stackLength();
+	void evaluateStack();
+	void sortStack();
+	void removeNode(RobotNode* p_graphNode);
+	void removeNode(int p_index);
+	void clearStack();
 
 	//Destroyer
 	~Robot();

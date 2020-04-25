@@ -136,8 +136,10 @@ void View::validateBuffer() {
 }
 
 void View::setRobotPosition(int p_xPosition, int p_yPosition) {
-	m_robotPosition.x = (float)(p_xPosition + xScale()->beginValue() - 280.0f) * PX_SIZE / m_zoom;
-	m_robotPosition.y = (float)(p_yPosition + yScale()->beginValue() - 20.0f) * PX_SIZE / m_zoom;
+	if (m_xScale && m_yScale) {
+		m_robotPosition.x = (float)(p_xPosition + m_xScale->beginValue() - 280.0f) * PX_SIZE / m_zoom;
+		m_robotPosition.y = (float)(p_yPosition + m_yScale->beginValue() - 20.0f) * PX_SIZE / m_zoom;
+	}
 }
 
 
@@ -201,11 +203,14 @@ void View::updateScales(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParen
 }
 
 void View::updateRobotImage() {
-	int a = 280 + (m_robotPosition.x - m_xScale->beginValue()) / PX_SIZE * m_zoom;
-	int b = 20 + (m_robotPosition.y - m_yScale->beginValue()) / PX_SIZE * m_zoom;
-	int c = 30 * m_zoom;
-	int d = 30 * m_zoom;
-	m_robotImage->destination({a, b, c, d});
+	if (m_xScale && m_yScale) {
+		int a = 280 + (m_robotPosition.x - m_xScale->beginValue()) / PX_SIZE * m_zoom;
+		int b = 20 + (m_robotPosition.y - m_yScale->beginValue()) / PX_SIZE * m_zoom;
+		int c = 15 * m_zoom;
+		int d = 15 * m_zoom;
+		m_robotImage->destination({ a, b, c, d });
+	}
+	else return;
 }
 
 
@@ -232,7 +237,7 @@ void View::render(SDL_Renderer* p_renderer, int p_xParentPos, int p_yParentPos) 
 	//Rendering robot
 	if (m_robotImage) {
 		updateRobotImage();
-		m_robotImage->render(-15 * m_zoom, -15 * m_zoom);
+		m_robotImage->render(-7 * m_zoom, -7 * m_zoom);
 	}
 
 	//Rendering scales
@@ -264,6 +269,7 @@ View::~View() {
 		delete m_drawing->at(i);
 	}
 	delete m_drawing;
+
 	if (m_drawingBuffer)
 		delete m_drawingBuffer;
 

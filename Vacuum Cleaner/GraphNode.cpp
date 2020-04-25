@@ -170,19 +170,40 @@ GraphNode* GraphNode::adj(int p_position) {
 GraphNode* GraphNode::seekGraph(int p_xPos, int p_yPos) {
 	//Loop variable
 	int i;
-	
+
 	GraphNode* tmp = this;
 
-	for (i = 0; i < p_xPos; i++) {
-		if (tmp->rgt())
-			tmp = tmp->rgt();
-		else return NULL;
+
+	if (p_xPos > 0) {
+		for (i = 0; i < p_xPos; i++) {
+			if (tmp->rgt())
+				tmp = tmp->rgt();
+			else return NULL;
+		}
 	}
-	for (i = 0; i < p_yPos; i++) {
-		if (tmp->bot())
-			tmp = tmp->bot();
-		else return NULL;
+	else {
+		for (i = 0; i < abs(p_xPos); i++) {
+			if (tmp->lft())
+				tmp = tmp->lft();
+			else return NULL;
+		}
 	}
+
+	if (p_yPos > 0) {
+		for (i = 0; i < p_yPos; i++) {
+			if (tmp->bot())
+				tmp = tmp->bot();
+			else return NULL;
+		}
+	}
+	else {
+		for (i = 0; i < abs(p_yPos); i++) {
+			if (tmp->top())
+				tmp = tmp->top();
+			else return NULL;
+		}
+	}
+	
 	return tmp;
 }
 

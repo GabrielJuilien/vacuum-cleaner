@@ -41,3 +41,5 @@ public:
 	//Destroyer
 	~RobotNode();
 };
+
+bool sortFunction(RobotNode* a, RobotNode* b);

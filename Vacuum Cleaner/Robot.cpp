@@ -45,34 +45,6 @@ Robot::Robot(int p_width, int p_height) {
 }
 
 //Setters
-void Robot::clearStack() {
-	m_stack->clear();
-}
-
-void Robot::addNode(RobotNode* p_graphNode) {
-	if (p_graphNode)
-		m_stack->push_back(p_graphNode);
-}
-
-void Robot::addNode(RobotNode* p_graphNode, int p_index) {
-	if (p_graphNode)
-		m_stack->insert(m_stack->begin() + p_index, p_graphNode);
-}
-
-void Robot::removeNode(RobotNode* p_graphNode) {
-	if (!p_graphNode) return;
-
-	std::vector<RobotNode*>::iterator it;
-	it = std::find(m_stack->begin(), m_stack->end(), p_graphNode);
-
-	if (it != m_stack->end())
-		m_stack->erase(it);
-}
-
-void Robot::removeNode(int p_index) {
-	m_stack->erase(m_stack->begin() + p_index);
-}
-
 void Robot::currentPosition(RobotNode* p_currentPos) {
 	m_currentPosition = p_currentPos;
 }
@@ -80,6 +52,14 @@ void Robot::currentPosition(RobotNode* p_currentPos) {
 //Getters
 RobotNode* Robot::currentPosition() {
 	return m_currentPosition;
+}
+
+RobotNode* Robot::graph() {
+	return m_graph;
+}
+
+Direction Robot::direction() {
+	return m_direction;
 }
 
 
@@ -306,8 +286,69 @@ void Robot::getRightNodes() {
 }
 
 
+//Stack management
+void Robot::addNode(RobotNode* p_graphNode) {
+	if (p_graphNode)
+		m_stack->push_back(p_graphNode);
+}
+
+void Robot::addNode(RobotNode* p_graphNode, int p_index) {
+	if (p_graphNode)
+		m_stack->insert(m_stack->begin() + p_index, p_graphNode);
+}
+
+int Robot::stackLength() {
+	return m_stack->size();
+}
+
+void Robot::evaluateStack() {
+	int length = stackLength();
+	int i;
+
+	for (i = 0; i < length; i++) {
+		m_stack->at(i)->evaluate(m_currentPosition);
+	}
+}
+
+void Robot::sortStack() {
+	std::sort(m_stack->begin(), m_stack->end(), sortFunction);
+}
+
+void Robot::removeNode(RobotNode* p_graphNode) {
+	if (!p_graphNode) return;
+
+	std::vector<RobotNode*>::iterator it;
+	it = std::find(m_stack->begin(), m_stack->end(), p_graphNode);
+
+	if (it != m_stack->end())
+		m_stack->erase(it);
+}
+
+void Robot::removeNode(int p_index) {
+	m_stack->erase(m_stack->begin() + p_index);
+}
+
+void Robot::clearStack() {
+	m_stack->clear();
+}
+
+
 //Destroyer
 Robot::~Robot() {
 	delete m_stack;
-	delete m_graph;
+
+	int i, j;
+	RobotNode* tmp = m_graph;
+	RobotNode* tmp2 = m_graph->bot();
+	RobotNode* tmp3 = tmp->right();
+	
+	for (i = 0; i < 1000; i++) {
+		tmp3 = tmp->right();
+		for (j = 0; j < 700; j++) {
+			tmp2 = tmp->bot();
+			delete tmp;
+			tmp = tmp2;
+		}
+		tmp = tmp3;
+	}
 }

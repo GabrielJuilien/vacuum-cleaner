@@ -13,7 +13,6 @@ enum class NodePosition { TOP, RIGHT, BOTTOM, LEFT };
 
 class GraphNode {
 private:
-
 	NodeType	m_type;
 	NodeState	m_state;
 	GraphNode*  m_top;

@@ -35,4 +35,10 @@ int switchToolToPlaceRobot(void* input);
 int switchToolToCGraph(void* input);
 
 void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleButton, Button* RmvRectangleButton, Button* SetRobotPosButton, Button* GraphRectangleButton, Button* FillButton, View* p_view, GraphData* p_graphData);
-void drawPhaseRender(SDL_Renderer* p_renderer, Step currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* SetRobotPosButton, Button* FillButton);
+void drawPhaseRender(SDL_Renderer* p_renderer, Step* currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphButton, Button* SetRobotPosButton, Button* FillButton);
+
+void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData);
+void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData);
+
+void deleteGraph(GraphNode* p_graph);
+void deleteRobot(Robot* p_robot);

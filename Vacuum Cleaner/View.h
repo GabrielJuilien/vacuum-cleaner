@@ -6,6 +6,8 @@
 #include "Line.h"
 #include "Image.h"
 
+#define SDL_POINT(vec2)
+
 class View : public Rect {
 private:
 	Scale* m_xScale;
@@ -60,6 +62,10 @@ public:
 	vec2 viewCenter();
 	std::vector<Rect*>* drawing();
 	Rect* drawingBuffer();
+
+	SDL_Point robotPosition() {
+		return { static_cast<int>(m_robotPosition.x), static_cast<int>(m_robotPosition.y) };
+	}
 
 	//Display management
 	void updateXText(int p_xParentPos, int p_yParentPos);
