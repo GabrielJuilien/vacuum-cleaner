@@ -61,10 +61,11 @@ void createGraph(void* input) {
 				buffer->bot(tmp_node);
 			}
 			buffer = tmp_node;
-			for (k = drawing->size() - 1; k > 0; k--) {
+			for (k = drawing->size() - 1; k >= 0; k--) {
 				if (drawing->at(k)->x() <= tmp_node->x() && drawing->at(k)->x() + drawing->at(k)->w() >= tmp_node->x() && drawing->at(k)->y() <= tmp_node->y() && drawing->at(k)->y() + drawing->at(k)->h() >= tmp_node->y()) {
-					if (drawing->at(k)->draw())
+					if (drawing->at(k)->draw()) {
 						tmp_node->type(NodeType::floor);
+					}
 					break;
 				}
 			}
@@ -95,6 +96,7 @@ int switchToolToCGraph(void* input) {
 	for (i = 0; i < 15; i++) {
 		for (j = 0; j < 15; j++) {
 			(*(graphData->m_robot))->currentPosition()->seekGraph(i - 7, j - 7)->graphNode((*(graphData->m_robot))->currentPosition()->graphNode()->seekGraph(- 7 + i, - 7 + j));
+			(*(graphData->m_robot))->currentPosition()->seekGraph(i - 7, j - 7)->graphNode()->type(NodeType::floor);
 			(*(graphData->m_robot))->currentPosition()->seekGraph(i - 7, j - 7)->graphNode()->state(NodeState::cleaned);
 		}
 	}
@@ -367,6 +369,11 @@ void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_grap
 		}
 	}
 
+	p_robot->getFrontNodes();
+	p_robot->getRightNodes();
+	p_robot->getBackNodes();
+	p_robot->getLeftNodes();
+
 	p_robot->evaluateStack();
 	p_robot->sortStack();
 
@@ -403,7 +410,7 @@ void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphD
 					SDL_RenderDrawPoint(p_renderer, i + 280, j + 20);
 					break;
 				case NodeState::dirty:
-					SDL_SetRenderDrawColor(p_renderer, 100, 100, 255, 0);
+					SDL_SetRenderDrawColor(p_renderer, 200, 200, 255, 0);
 					SDL_RenderDrawPoint(p_renderer, i + 280, j + 20);
 					break;
 				case NodeState::cleaned:

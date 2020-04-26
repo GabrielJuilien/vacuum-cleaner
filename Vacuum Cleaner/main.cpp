@@ -97,6 +97,8 @@ int main(int argc, char** argv)
 	}
 
 
+	std::thread thread1(deleteRobot, robot);
+
 	delete AddRectangleButton;
 	delete RmvRectangleButton;
 	delete GraphRectangleButton;
@@ -104,9 +106,6 @@ int main(int argc, char** argv)
 	delete FillButton;
 	delete view;
 
-	// Destroy
-
-	std::thread thread1(deleteRobot, robot);
 
 	if (Graph)
 	{
@@ -124,7 +123,5 @@ int main(int argc, char** argv)
 	TTF_Quit();
 	SDL_Quit();
 
-	_CrtDumpMemoryLeaks();
-	system("pause");
 	return EXIT_SUCCESS;
 }

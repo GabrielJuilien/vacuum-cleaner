@@ -27,8 +27,7 @@ GraphNode::GraphNode(NodeType p_type, NodeState p_state, GraphNode* p_top, Graph
 }
 
 //Setters
-void GraphNode::type(NodeType p_type) 
-{
+void GraphNode::type(NodeType p_type) {
 	m_type = p_type;
 }
 

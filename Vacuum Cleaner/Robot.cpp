@@ -270,25 +270,213 @@ unsigned short Robot::getLeftState() {
 
 //Retrieve data from graph
 void Robot::getFrontNodes() {
-
+	int i;
+	RobotNode* tmp;
+	switch (m_direction) {
+	case Direction::UP:
+		tmp = m_currentPosition->seekGraph(-7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->top(tmp->graphNode()->top());
+			if (tmp->graphNode()->top()->type() == NodeType::floor && tmp->graphNode()->top()->state() == NodeState::null) {
+				tmp->top()->graphNode()->state(NodeState::dirty);
+				addNode(tmp->top());
+			}
+			tmp = tmp->right();
+		}
+		break;
+	case Direction::RIGHT:
+		tmp = m_currentPosition->seekGraph(7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->right(tmp->graphNode()->rgt());
+			if (tmp->graphNode()->rgt()->type() == NodeType::floor && tmp->graphNode()->rgt()->state() == NodeState::null) {
+				tmp->right()->graphNode()->state(NodeState::dirty);
+				addNode(tmp->right());
+			}
+			tmp = tmp->bot();
+		}
+		break;
+	case Direction::DOWN:
+		tmp = m_currentPosition->seekGraph(7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->bot(tmp->graphNode()->bot());
+			if (tmp->graphNode()->bot()->type() == NodeType::floor && tmp->graphNode()->bot()->state() == NodeState::null) {
+				tmp->graphNode()->bot()->state(NodeState::dirty);
+				addNode(tmp->bot());
+			}
+			tmp = tmp->left();
+		}
+		break;
+	case Direction::LEFT:
+		tmp = m_currentPosition->seekGraph(-7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->left(tmp->graphNode()->lft());
+			if (tmp->graphNode()->lft()->type() == NodeType::floor && tmp->graphNode()->lft()->state() == NodeState::null) {
+				tmp->graphNode()->lft()->state(NodeState::dirty);
+				addNode(tmp->left());
+			}
+			tmp = tmp->top();
+		}
+		break;
+	}
 }
 
 void Robot::getBackNodes() {
-
+	int i;
+	RobotNode* tmp;
+	switch (m_direction) {
+	case Direction::DOWN:
+		tmp = m_currentPosition->seekGraph(-7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->top(tmp->graphNode()->top());
+			if (tmp->graphNode()->top()->type() == NodeType::floor && tmp->graphNode()->top()->state() == NodeState::null) {
+				tmp->graphNode()->top()->state(NodeState::dirty);
+				addNode(tmp->top());
+			}
+			tmp = tmp->right();
+		}
+		break;
+	case Direction::LEFT:
+		tmp = m_currentPosition->seekGraph(7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->right(tmp->graphNode()->rgt());
+			if (tmp->graphNode()->rgt()->type() == NodeType::floor && tmp->graphNode()->rgt()->state() == NodeState::null) {
+				tmp->graphNode()->rgt()->state(NodeState::dirty);
+				addNode(tmp->right());
+			}
+			tmp = tmp->bot();
+		}
+		break;
+	case Direction::UP:
+		tmp = m_currentPosition->seekGraph(7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->bot(tmp->graphNode()->bot());
+			if (tmp->graphNode()->bot()->type() == NodeType::floor && tmp->graphNode()->bot()->state() == NodeState::null) {
+				tmp->graphNode()->bot()->state(NodeState::dirty);
+				addNode(tmp->bot());
+			}
+			tmp = tmp->left();
+		}
+		break;
+	case Direction::RIGHT:
+		tmp = m_currentPosition->seekGraph(-7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->left(tmp->graphNode()->lft());
+			if (tmp->graphNode()->lft()->type() == NodeType::floor && tmp->graphNode()->lft()->state() == NodeState::null) {
+				tmp->graphNode()->lft()->state(NodeState::dirty);
+				addNode(tmp->left());
+			}
+			tmp = tmp->top();
+		}
+		break;
+	}
 }
 
 void Robot::getLeftNodes() {
-
+	int i;
+	RobotNode* tmp;
+	switch (m_direction) {
+	case Direction::RIGHT:
+		tmp = m_currentPosition->seekGraph(-7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->top(tmp->graphNode()->top());
+			if (tmp->graphNode()->top()->type() == NodeType::floor && tmp->graphNode()->top()->state() == NodeState::null) {
+				tmp->graphNode()->top()->state(NodeState::dirty);
+				addNode(tmp->top());
+			}
+			tmp = tmp->right();
+		}
+		break;
+	case Direction::DOWN:
+		tmp = m_currentPosition->seekGraph(7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->right(tmp->graphNode()->rgt());
+			if (tmp->graphNode()->rgt()->type() == NodeType::floor && tmp->graphNode()->rgt()->state() == NodeState::null) {
+				tmp->graphNode()->rgt()->state(NodeState::dirty);
+				addNode(tmp->right());
+			}
+			tmp = tmp->bot();
+		}
+		break;
+	case Direction::LEFT:
+		tmp = m_currentPosition->seekGraph(7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->bot(tmp->graphNode()->bot());
+			if (tmp->graphNode()->bot()->type() == NodeType::floor && tmp->graphNode()->bot()->state() == NodeState::null) {
+				tmp->graphNode()->bot()->state(NodeState::dirty);
+				addNode(tmp->bot());
+			}
+			tmp = tmp->left();
+		}
+		break;
+	case Direction::UP:
+		tmp = m_currentPosition->seekGraph(-7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->left(tmp->graphNode()->lft());
+			if (tmp->graphNode()->lft()->type() == NodeType::floor && tmp->graphNode()->lft()->state() == NodeState::null) {
+				tmp->graphNode()->lft()->state(NodeState::dirty);
+				addNode(tmp->left());
+			}
+			tmp = tmp->top();
+		}
+		break;
+	}
 }
 
 void Robot::getRightNodes() {
-
+	int i;
+	RobotNode* tmp;
+	switch (m_direction) {
+	case Direction::LEFT:
+		tmp = m_currentPosition->seekGraph(-7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->top(tmp->graphNode()->top());
+			if (tmp->graphNode()->top()->type() == NodeType::floor && tmp->graphNode()->top()->state() == NodeState::null) {
+				tmp->graphNode()->top()->state(NodeState::dirty);
+				addNode(tmp->top());
+			}
+			tmp = tmp->right();
+		}
+		break;
+	case Direction::UP:
+		tmp = m_currentPosition->seekGraph(7, -7);
+		for (i = 0; i < 15; i++) {
+			tmp->right(tmp->graphNode()->rgt());
+			if (tmp->graphNode()->rgt()->type() == NodeType::floor && tmp->graphNode()->rgt()->state() == NodeState::null) {
+				tmp->graphNode()->rgt()->state(NodeState::dirty);
+				addNode(tmp->right());
+			}
+			tmp = tmp->bot();
+		}
+		break;
+	case Direction::RIGHT:
+		tmp = m_currentPosition->seekGraph(7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->bot(tmp->graphNode()->bot());
+			if (tmp->graphNode()->bot()->type() == NodeType::floor && tmp->graphNode()->bot()->state() == NodeState::null) {
+				tmp->graphNode()->bot()->state(NodeState::dirty);
+				addNode(tmp->bot());
+			}
+			tmp = tmp->left();
+		}
+		break;
+	case Direction::DOWN:
+		tmp = m_currentPosition->seekGraph(-7, 7);
+		for (i = 0; i < 15; i++) {
+			tmp->left(tmp->graphNode()->lft());
+			if (tmp->graphNode()->lft()->type() == NodeType::floor && tmp->graphNode()->lft()->state() == NodeState::null) {
+				tmp->graphNode()->lft()->state(NodeState::dirty);
+				addNode(tmp->left());
+			}
+			tmp = tmp->top();
+		}
+		break;
+	}
 }
 
 
 //Stack management
 void Robot::addNode(RobotNode* p_graphNode) {
-	if (p_graphNode)
+	//if (p_graphNode)
 		m_stack->push_back(p_graphNode);
 }
 
