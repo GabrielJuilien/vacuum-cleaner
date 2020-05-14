@@ -3,15 +3,16 @@
 #include "GraphNode.h"
 #include "RobotNode.h"
 #include <algorithm>
+#include <iostream>
 
 #define ROBOT_LENGTH 30
 #define ROBOT_WIDTH 30
 
-enum class Direction {UP, DOWN, LEFT, RIGHT};
 
 class Robot {
 private:
-	std::vector<RobotNode*>* m_stack;
+	std::vector<RobotNode*>* m_targetNodesStack;
+	std::vector<RobotNode*>* m_targetZoneStack;
 	RobotNode* m_currentPosition;
 	RobotNode* m_graph; 
 	Direction m_direction;
@@ -39,13 +40,16 @@ public:
 	unsigned short getLeftState();
 	unsigned short getRightState();
 
+	//Hitbox function
+	bool canStandOn(RobotNode* p_position);
+
 	//Retrieve data from graph
 	void getFrontNodes();
 	void getBackNodes();
 	void getLeftNodes();
 	void getRightNodes();
 
-	//Stack management
+	//Nodes stack management
 	void addNode(RobotNode* p_graphNode);
 	void addNode(RobotNode* p_graphNode, int p_index);
 	int stackLength();
@@ -54,6 +58,17 @@ public:
 	void removeNode(RobotNode* p_graphNode);
 	void removeNode(int p_index);
 	void clearStack();
+
+	//Zone stack management
+	void getZone();
+	void evaluateZoneStack();
+	void sortZoneStack();
+	RobotNode* getTargetNode();
+	void clearZoneStack();
+
+	//A* algorithm
+	void a_star();
+	Direction buildPath(std::vector<RobotNode*>* p_closedList, RobotNode* p_targetPosition);
 
 	//Destroyer
 	~Robot();

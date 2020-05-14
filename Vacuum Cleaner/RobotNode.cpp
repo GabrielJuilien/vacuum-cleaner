@@ -59,6 +59,19 @@ void RobotNode::right(GraphNode* p_graphNode) {
 		m_right->m_graphNode = p_graphNode;
 }
 
+void RobotNode::evaluation(float p_evaluation) {
+	m_evaluation = p_evaluation;
+}
+
+void RobotNode::cost(float p_cost) {
+	m_cost = p_cost;
+}
+
+void RobotNode::heuristic(float p_heuristic) {
+	m_heuristic = p_heuristic;
+}
+
+
 //Getters
 GraphNode* RobotNode::graphNode() {
 	return m_graphNode;
@@ -108,8 +121,16 @@ GraphNode* RobotNode::right_() {
 		return NULL;
 }
 
-int RobotNode::evaluation() {
+float RobotNode::evaluation() {
 	return m_evaluation;
+}
+
+float RobotNode::cost() {
+	return m_cost;
+}
+
+float RobotNode::heuristic() {
+	return m_heuristic;
 }
 
 
@@ -143,22 +164,71 @@ RobotNode* RobotNode::seekGraph(int i, int j) {
 			tmp = tmp->m_top;
 		}
 	}
-
 	return tmp;
 }
 
-int RobotNode::evaluate(RobotNode* p_currentPos) { //WIP, evaluates only the distance, without considering all the nodes to clean around it.
-	if (m_graphNode)
-		m_evaluation = abs(p_currentPos->m_graphNode->x() - m_graphNode->x()) + abs(p_currentPos->m_graphNode->y() - m_graphNode->y());
+float RobotNode::calculateEvaluation(RobotNode* p_currentPos, Direction p_robotDirection) {
+	if (this == p_currentPos)
+		m_evaluation = 0;
+	else if (m_graphNode) {
+		int x_evaluation = p_currentPos->graphNode()->x() - m_graphNode->x();
+		int y_evaluation = p_currentPos->graphNode()->y() - m_graphNode->y();
+
+		if (x_evaluation == 0) {
+			if (y_evaluation < 0) {
+				if (p_robotDirection == Direction::DOWN)
+					m_evaluation = -y_evaluation;
+				else
+					m_evaluation = -y_evaluation + 2;
+			}
+			else {
+				if (p_robotDirection == Direction::UP)
+					m_evaluation = y_evaluation;
+				else
+					m_evaluation = y_evaluation + 2;
+			}
+		}
+		else if (y_evaluation == 0) {
+			if (x_evaluation > 0) {
+				if (p_robotDirection == Direction::RIGHT)
+					m_evaluation = x_evaluation;
+				else
+					m_evaluation = x_evaluation + 2;
+			}
+			else {
+				if (p_robotDirection == Direction::LEFT)
+					m_evaluation = -x_evaluation;
+				else
+					m_evaluation = -x_evaluation + 2;
+			}
+		}
+		else m_evaluation = abs(x_evaluation) + abs(y_evaluation) + 2;
+	}
 	else
 		m_evaluation = -1;
 
 	return m_evaluation;
 }
 
+float RobotNode::calculateCost(RobotNode* p_previousNode) {
+	m_cost = 1;
+	return 1.0f;
+}
+
+float RobotNode::calculateHeuristic(RobotNode* p_targetNode) {
+	m_heuristic = m_cost + abs(p_targetNode->graphNode()->x() - m_graphNode->x()) + abs(p_targetNode->graphNode()->y() - m_graphNode->y());
+	return m_heuristic;
+}
+
 bool sortFunction(RobotNode* a, RobotNode* b) {
 	if (a->evaluation() > b->evaluation()) return true;
 	else return false;
+}
+
+int compareFunction(RobotNode* a, RobotNode* b) {
+	if (a->evaluation() < b->evaluation()) return 1;
+	else if (a->evaluation() == b->evaluation()) return 0;
+	else return -1;
 }
 
 //Destroyer
