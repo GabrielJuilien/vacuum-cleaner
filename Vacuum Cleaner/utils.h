@@ -12,10 +12,6 @@
 #include <string>
 #include <math.h>
 
-#ifdef _DEBUG
-#include <vld.h>
-#endif
-
 #include <stdlib.h>
 #include <crtdbg.h>
 

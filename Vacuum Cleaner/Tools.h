@@ -16,7 +16,9 @@ enum class Tool {
 
 enum class Step {
 	DRAW,
+	DRAWING_PROCESSING,
 	SIMULATION_RENDERING,
+	SIMULATION_END,
 	QUIT
 };
 

@@ -6,7 +6,9 @@ RobotNode::RobotNode() {
 	m_bot = NULL;
 	m_left = NULL;
 	m_right = NULL;
-	m_evaluation = 0;
+
+	m_evaluation = INT_MAX;
+	m_previous = NULL;
 }
 
 RobotNode::RobotNode(GraphNode* p_graphNode) {
@@ -15,7 +17,9 @@ RobotNode::RobotNode(GraphNode* p_graphNode) {
 	m_bot = NULL;
 	m_left = NULL;
 	m_right = NULL;
-	m_evaluation = 0;
+
+	m_evaluation = INT_MAX;
+	m_previous = NULL;
 }
 
 //Setters
@@ -57,6 +61,10 @@ void RobotNode::right(RobotNode* p_graphNode) {
 void RobotNode::right(GraphNode* p_graphNode) {
 	if (m_right)
 		m_right->m_graphNode = p_graphNode;
+}
+
+void RobotNode::previous(RobotNode* p_previous) {
+	m_previous = p_previous;
 }
 
 //Getters
@@ -112,6 +120,10 @@ int RobotNode::evaluation() {
 	return m_evaluation;
 }
 
+RobotNode* RobotNode::previous() {
+	return m_previous;
+}
+
 
 //Graph management
 RobotNode* RobotNode::seekGraph(int i, int j) {
@@ -147,12 +159,42 @@ RobotNode* RobotNode::seekGraph(int i, int j) {
 	return tmp;
 }
 
-int RobotNode::evaluate(RobotNode* p_currentPos) { //WIP, evaluates only the distance, without considering all the nodes to clean around it.
-	if (m_graphNode)
-		m_evaluation = abs(p_currentPos->m_graphNode->x() - m_graphNode->x()) + abs(p_currentPos->m_graphNode->y() - m_graphNode->y());
-	else
-		m_evaluation = -1;
-
+float RobotNode::calculateEvaluation(RobotNode* p_currentPos, Direction p_robotDirection) {
+	if (this == p_currentPos)
+		m_evaluation = 0;
+	else if (m_graphNode) {
+		int x_evaluation = p_currentPos->graphNode()->x() - m_graphNode->x();
+		int y_evaluation = p_currentPos->graphNode()->y() - m_graphNode->y();
+		if (x_evaluation == 0) {
+			if (y_evaluation < 0) {
+				if (p_robotDirection == Direction::DOWN)
+					m_evaluation = -y_evaluation;
+				else
+					m_evaluation = -y_evaluation + 2;
+			}
+			else {
+				if (p_robotDirection == Direction::UP)
+					m_evaluation = y_evaluation;
+				else
+					m_evaluation = y_evaluation + 2;
+			}
+		}
+		else if (y_evaluation == 0) {
+			if (x_evaluation > 0) {
+				if (p_robotDirection == Direction::RIGHT)
+					m_evaluation = x_evaluation;
+				else
+					m_evaluation = x_evaluation + 2;
+			}
+			else {
+				if (p_robotDirection == Direction::LEFT)
+					m_evaluation = -x_evaluation;
+				else
+					m_evaluation = -x_evaluation + 2;
+			}
+		}
+		else m_evaluation = abs(x_evaluation) + abs(y_evaluation) + 2;
+	}
 	return m_evaluation;
 }
 

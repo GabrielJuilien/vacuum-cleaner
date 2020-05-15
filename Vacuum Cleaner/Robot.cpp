@@ -2,14 +2,16 @@
 
 //Constructors
 Robot::Robot() {
-	m_stack = new std::vector<RobotNode*>();
+	m_targetNodeStack = new std::vector<RobotNode*>();
+	m_targetZoneStack = new std::vector<RobotNode*>();
 	m_currentPosition = NULL;
 	m_graph = NULL;
 	m_direction = Direction::UP;
 }
 
 Robot::Robot(int p_width, int p_height) {
-	m_stack = new std::vector<RobotNode*>();
+	m_targetNodeStack = new std::vector<RobotNode*>();
+	m_targetZoneStack = new std::vector<RobotNode*>();
 	m_graph = NULL;
 	m_currentPosition = NULL;
 	
@@ -159,18 +161,18 @@ unsigned short Robot::getFrontState() {
 	RobotNode* tmp = NULL;
 
 	for (i = 0; i < 15; i++) {
-		switch (m_direction){
+		switch (m_direction) {
 		case Direction::UP:
-			tmp = m_currentPosition->seekGraph(i - 7, 8);
+			tmp = m_currentPosition->seekGraph(i - 7, -8);
 			break;
 		case Direction::DOWN:
-			tmp = m_currentPosition->seekGraph(-i + 7, -8);
+			tmp = m_currentPosition->seekGraph(i - 7, 8);
 			break;
 		case Direction::LEFT:
-			tmp = m_currentPosition->seekGraph(-7, -i + 8);
+			tmp = m_currentPosition->seekGraph(-8, i - 7);
 			break;
 		case Direction::RIGHT:
-			tmp = m_currentPosition->seekGraph(7, i - 8);
+			tmp = m_currentPosition->seekGraph(8, i - 7);
 			break;
 		}
 
@@ -189,16 +191,16 @@ unsigned short Robot::getBackState() {
 	for (i = 0; i < 15; i++) {
 		switch (m_direction) {
 		case Direction::UP:
-			tmp = m_currentPosition->seekGraph(i - 7, -8);
+			tmp = m_currentPosition->seekGraph(i - 7, 8);
 			break;
 		case Direction::DOWN:
-			tmp = m_currentPosition->seekGraph(-i + 7, 8);
+			tmp = m_currentPosition->seekGraph(i - 7, -8);
 			break;
 		case Direction::LEFT:
-			tmp = m_currentPosition->seekGraph(7, -i + 8);
+			tmp = m_currentPosition->seekGraph(8, i - 7);
 			break;
 		case Direction::RIGHT:
-			tmp = m_currentPosition->seekGraph(-7, i - 8);
+			tmp = m_currentPosition->seekGraph(-8, i - 7);
 			break;
 		}
 
@@ -221,13 +223,13 @@ unsigned short Robot::getRightState() {
 			tmp = m_currentPosition->seekGraph(8, i - 7);
 			break;
 		case Direction::DOWN:
-			tmp = m_currentPosition->seekGraph(-8, -i + 7);
-			break;
-		case Direction::LEFT:
 			tmp = m_currentPosition->seekGraph(-8, i - 7);
 			break;
+		case Direction::LEFT:
+			tmp = m_currentPosition->seekGraph(i - 7, -8);
+			break;
 		case Direction::RIGHT:
-			tmp = m_currentPosition->seekGraph(8, -i + 7);
+			tmp = m_currentPosition->seekGraph(i - 7, 8);
 			break;
 		}
 
@@ -250,13 +252,13 @@ unsigned short Robot::getLeftState() {
 			tmp = m_currentPosition->seekGraph(-8, i - 7);
 			break;
 		case Direction::DOWN:
-			tmp = m_currentPosition->seekGraph(8, -i + 7);
-			break;
-		case Direction::LEFT:
 			tmp = m_currentPosition->seekGraph(8, i - 7);
 			break;
+		case Direction::LEFT:
+			tmp = m_currentPosition->seekGraph(i - 7, 8);
+			break;
 		case Direction::RIGHT:
-			tmp = m_currentPosition->seekGraph(-8, -i + 7);
+			tmp = m_currentPosition->seekGraph(i - 7, -8);
 			break;
 		}
 
@@ -267,6 +269,20 @@ unsigned short Robot::getLeftState() {
 	return res;
 }
 
+//Hitbox function
+bool Robot::canStandOn(RobotNode* p_position) {
+	int i, j;
+	RobotNode* tmp;
+	for (i = 0; i < 15; i++) {
+		for (j = 0; j < 15; j++) {
+			tmp = p_position->seekGraph(i - 7, j - 7);
+			if (!tmp || tmp->graphNode() == NULL || tmp->graphNode()->type() != NodeType::floor)
+				return false;
+		}
+	}
+
+	return true;
+}
 
 //Retrieve data from graph
 void Robot::getFrontNodes() {
@@ -477,16 +493,16 @@ void Robot::getRightNodes() {
 //Stack management
 void Robot::addNode(RobotNode* p_graphNode) {
 	//if (p_graphNode)
-		m_stack->push_back(p_graphNode);
+	m_targetNodeStack->push_back(p_graphNode);
 }
 
 void Robot::addNode(RobotNode* p_graphNode, int p_index) {
 	if (p_graphNode)
-		m_stack->insert(m_stack->begin() + p_index, p_graphNode);
+		m_targetNodeStack->insert(m_targetNodeStack->begin() + p_index, p_graphNode);
 }
 
 int Robot::stackLength() {
-	return m_stack->size();
+	return m_targetNodeStack->size();
 }
 
 void Robot::evaluateStack() {
@@ -494,36 +510,153 @@ void Robot::evaluateStack() {
 	int i;
 
 	for (i = 0; i < length; i++) {
-		m_stack->at(i)->evaluate(m_currentPosition);
+		m_targetNodeStack->at(i)->calculateEvaluation(m_currentPosition, m_direction);
 	}
 }
 
 void Robot::sortStack() {
-	std::sort(m_stack->begin(), m_stack->end(), sortFunction);
+	std::sort(m_targetNodeStack->begin(), m_targetNodeStack->end(), sortFunction);
 }
 
 void Robot::removeNode(RobotNode* p_graphNode) {
 	if (!p_graphNode) return;
 
 	std::vector<RobotNode*>::iterator it;
-	it = std::find(m_stack->begin(), m_stack->end(), p_graphNode);
+	it = std::find(m_targetNodeStack->begin(), m_targetNodeStack->end(), p_graphNode);
 
-	if (it != m_stack->end())
-		m_stack->erase(it);
+	if (it != m_targetNodeStack->end())
+		m_targetNodeStack->erase(it);
 }
 
 void Robot::removeNode(int p_index) {
-	m_stack->erase(m_stack->begin() + p_index);
+	m_targetNodeStack->erase(m_targetNodeStack->begin() + p_index);
 }
 
 void Robot::clearStack() {
-	m_stack->clear();
+	m_targetNodeStack->clear();
+}
+
+bool Robot::emptyNodeStack() {
+	if (m_targetNodeStack->size() == 0) return true;
+	else return false;
+}
+
+//Zone stack management
+void Robot::getZone() {
+	//Loop variables
+	int i, j, k;
+
+	m_targetZoneStack->clear();
+
+	RobotNode* target_node = m_targetNodeStack->at(0);
+	RobotNode* tmp = NULL;
+	bool resetLoop = false;
+
+	for (i = 0; i < 15; i++) {
+		for (j = 0; j < 15; j++) {
+			if (target_node->seekGraph(i - 7, j - 7)->graphNode() != NULL && canStandOn(target_node->seekGraph(i - 7, j - 7)))
+				m_targetZoneStack->push_back(target_node->seekGraph(i - 7, j - 7));
+		}
+	}
+}
+
+void Robot::evaluateZoneStack() {
+	//Loop variable
+	int i;
+
+	int stack_length = m_targetZoneStack->size();
+
+	for (i = 0; i < stack_length; i++) {
+		m_targetZoneStack->at(i)->calculateEvaluation(m_currentPosition, m_direction);
+	}
+}
+
+void Robot::sortZoneStack() {
+	std::sort(m_targetZoneStack->begin(), m_targetZoneStack->end(), sortFunction);
+}
+
+RobotNode* Robot::getTargetNode() {
+	return m_targetZoneStack->at(m_targetZoneStack->size() - 1);
+}
+
+void Robot::clearZoneStack() {
+	m_targetZoneStack->clear();
 }
 
 
+//Path finding algorithm
+bool Robot::dijkstra() {
+	int i, j;
+	int stack_length = m_targetZoneStack->size();
+	RobotNode* tmp = NULL;
+	RobotNode* next_col = m_graph;
+
+	std::vector<RobotNode*> Q;
+
+	for (i = 0; i < 1000; i++) {
+		tmp = next_col;
+		next_col = tmp->right();
+		for (j = 0; j < 700; j++) {
+			if (canStandOn(tmp)) {
+				Q.push_back(tmp);
+				tmp->previous(NULL);
+			}
+			tmp = tmp->bot();
+		}
+	}
+
+	RobotNode* source = m_currentPosition;
+	RobotNode* target = m_targetZoneStack->at(m_targetZoneStack->size() - 1);
+	RobotNode* u = m_currentPosition,* v = NULL;;
+
+	while (Q.size() != 0) {
+		for (i = 0; i < Q.size(); i++)
+			Q.at(i)->calculateEvaluation(u, m_direction);
+		std::sort(Q.begin(), Q.end(), sortFunction);
+		v = Q.at(Q.size() - 1);
+		if (v != m_currentPosition)
+			v->previous(u);
+		u = v;
+		Q.erase(std::find(Q.begin(), Q.end(), u));
+
+		if (u == target)
+			break;
+	}
+	
+	if (u != target) { //No path was found
+		return false;
+	}
+
+	std::vector<RobotNode*> S;
+	while (u) {
+			S.push_back(u);
+			u = u->previous();
+	}
+
+	RobotNode* next_hop = S.at(0);
+	if (next_hop == m_currentPosition->top()) {
+		m_direction = Direction::UP;
+		return forward(false);
+	}
+	else if (next_hop == m_currentPosition->right()) {
+		m_direction = Direction::RIGHT;
+		return forward(false);
+	}
+	else if (next_hop == m_currentPosition->bot()) {
+		m_direction = Direction::DOWN;
+		return forward(false);
+	}
+	else if (next_hop == m_currentPosition->left()) {
+		m_direction = Direction::LEFT;
+		return forward(false);
+	}
+	else forward(false);
+	
+}
+
 //Destroyer
 Robot::~Robot() {
-	delete m_stack;
+	delete m_targetNodeStack;
 
 	int i, j;
 	RobotNode* tmp = m_graph;

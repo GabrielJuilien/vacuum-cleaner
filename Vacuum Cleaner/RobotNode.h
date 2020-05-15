@@ -1,11 +1,16 @@
 #pragma once
 #include "GraphNode.h"
 
+enum class Direction { UP, DOWN, LEFT, RIGHT };
+
 class RobotNode {
 private:
 	GraphNode* m_graphNode;
 	RobotNode *m_top, *m_bot, *m_left, *m_right;
+
 	int m_evaluation;
+	RobotNode* m_previous;
+
 public:
 	//Constructors
 	RobotNode();
@@ -21,6 +26,7 @@ public:
 	void left(GraphNode* p_graphNode);
 	void right(RobotNode* p_graphNode);
 	void right(GraphNode* p_graphNode);
+	void previous(RobotNode* p_previous);
 
 	//Getters
 	GraphNode* graphNode();
@@ -33,10 +39,11 @@ public:
 	RobotNode* right();
 	GraphNode* right_();
 	int evaluation();
+	RobotNode* previous();
 
 	//Graph management
 	RobotNode* seekGraph(int i, int j);
-	int evaluate(RobotNode* p_currentPos);
+	float calculateEvaluation(RobotNode* p_currentPos, Direction p_robotDirection);
 
 	//Destroyer
 	~RobotNode();

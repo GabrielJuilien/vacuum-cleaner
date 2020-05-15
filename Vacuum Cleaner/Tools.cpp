@@ -345,7 +345,7 @@ void drawPhaseRender(SDL_Renderer* p_renderer, Step* currentStep, View* view, Bu
 
 
 void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData) {
-	int i;
+	int i, j;
 
 	static Robot* p_robot = *(p_graphData->m_robot);
 	
@@ -374,16 +374,27 @@ void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_grap
 	p_robot->getBackNodes();
 	p_robot->getLeftNodes();
 
+	p_robot->removeNode(p_robot->currentPosition());
 	p_robot->evaluateStack();
 	p_robot->sortStack();
 
+	p_robot->getZone();
+	p_robot->evaluateZoneStack();
+	p_robot->sortZoneStack();
+	
+	p_robot->dijkstra();
 
-	if (update_view)
-		simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
-	else
-		std::this_thread::sleep_for(std::chrono::milliseconds(5));
+	for (i = 0; i < 15; i++) {
+		for (j = 0; j < 15; j++) {
+			p_robot->currentPosition()->seekGraph(i - 7, j - 7)->graphNode()->state(NodeState::cleaned);
+		}
+	}
 
-	update_view = false;
+	SDL_SetRenderDrawColor(p_renderer, 255, 0, 0, 0);
+	SDL_RenderDrawPoint(p_renderer, p_robot->getTargetNode()->graphNode()->x() / 2 + 280, p_robot->getTargetNode()->graphNode()->y() / 2 + 20);
+	SDL_RenderPresent(p_renderer);
+
+	simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
 }
 
 void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData) {
@@ -396,7 +407,7 @@ void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphD
 
 	static SDL_Texture* robotTexture = SDL_CreateTextureFromSurface(p_renderer, IMG_Load("ressources/robot.png"));
 	static SDL_Rect destination = { 0, 0, 30, 30 };
-	static SDL_Point center = { 15, 15 };
+	static SDL_Point center = { 7, 7 };
 
 	tmp = (*(p_graphData->m_robot))->graph();
 	for (i = 0; i < 1000; i++) {
@@ -425,6 +436,7 @@ void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphD
 		}
 		tmp = tmp2;
 	}
+
 
 	destination = { (*(p_graphData->m_robot))->currentPosition()->graphNode()->x() / PX_SIZE + 280 - 7, (*(p_graphData->m_robot))->currentPosition()->graphNode()->y() / PX_SIZE + 20 - 7, 15, 15 };
 
