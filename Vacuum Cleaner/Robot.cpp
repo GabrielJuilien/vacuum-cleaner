@@ -283,6 +283,7 @@ unsigned short Robot::getLeftState() {
 bool Robot::canStandOn(RobotNode* p_position) {
 	int i, j;
 	RobotNode* tmp;
+
 	for (i = 0; i < 15; i++) {
 		for (j = 0; j < 15; j++) {
 			tmp = p_position->seekGraph(i - 7, j - 7);
