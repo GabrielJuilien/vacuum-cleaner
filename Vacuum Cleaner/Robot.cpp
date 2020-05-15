@@ -502,13 +502,17 @@ void Robot::getRightNodes() {
 
 //Stack management
 void Robot::addNode(RobotNode* p_graphNode) {
-	//if (p_graphNode)
 	m_targetNodeStack->push_back(p_graphNode);
 }
 
 void Robot::addNode(RobotNode* p_graphNode, int p_index) {
 	if (p_graphNode)
 		m_targetNodeStack->insert(m_targetNodeStack->begin() + p_index, p_graphNode);
+}
+
+bool Robot::find(RobotNode* p_node) {
+	if (std::find(m_targetNodeStack->begin(), m_targetNodeStack->end(), p_node) != m_targetNodeStack->end()) return true;
+	else return false;
 }
 
 int Robot::stackLength() {
@@ -552,13 +556,13 @@ bool Robot::emptyNodeStack() {
 }
 
 //Zone stack management
-void Robot::getZone() {
+void Robot::getZone(int p_endOffset) {
 	//Loop variables
 	int i, j, k;
 
 	m_targetZoneStack->clear();
 
-	RobotNode* target_node = m_targetNodeStack->at(m_targetNodeStack->size() - 1);
+	RobotNode* target_node = m_targetNodeStack->at(m_targetNodeStack->size() - p_endOffset);
 	RobotNode* tmp = NULL;
 	bool resetLoop = false;
 
@@ -596,86 +600,102 @@ void Robot::clearZoneStack() {
 
 //Path finding algorithm
 bool Robot::dijkstra() {
-	int i, j, k = 1;
+	int i, j = 1, k = 1;
 	RobotNode* tmp = NULL;
-	RobotNode* next_col = m_graph;
 
+	std::vector<RobotNode*> P;
 	std::vector<RobotNode*> Q;
 	std::vector<RobotNode*> S;
 
 	RobotNode* next_hop;
-	RobotNode* source, *target;
-	RobotNode* u, *v;
+	RobotNode* source = NULL, *target = NULL;
+	RobotNode* u = NULL, *v = NULL;
 
-	while (k <= m_targetZoneStack->size()) {
-		S.clear();
-		Q.clear();
-		next_col = m_graph;
+	while (j <= m_targetNodeStack->size()) {
 
-		for (i = 0; i < 1000; i++) {
-			tmp = next_col;
-			next_col = tmp->right();
-			for (j = 0; j < 700; j++) {
-				if (canStandOn(tmp)) {
-					Q.push_back(tmp);
-					tmp->previous(NULL);
+		getZone(j);
+		evaluateZoneStack();
+		sortZoneStack();
+
+		while (k <= m_targetZoneStack->size()) {
+			P.clear();
+			S.clear();
+			Q.clear();
+
+			source = m_currentPosition;
+			target = m_targetZoneStack->at(m_targetZoneStack->size() - k);
+
+			u = source;
+			u->previous(NULL);
+			P.push_back(u);
+
+			while (P.empty() != true && u != target) {
+				if (std::find(Q.begin(), Q.end(), u->top()) == Q.end() && std::find(P.begin(), P.end(), u->top()) == P.end() && canStandOn(u->top())) {
+					u->top()->previous(u);
+					P.push_back(u->top());
 				}
-				tmp = tmp->bot();
+				if (std::find(Q.begin(), Q.end(), u->right()) == Q.end() && std::find(P.begin(), P.end(), u->right()) == P.end() && canStandOn(u->right())) {
+					u->right()->previous(u);
+					P.push_back(u->right());
+				}
+				if (std::find(Q.begin(), Q.end(), u->bot()) == Q.end() && std::find(P.begin(), P.end(), u->bot()) == P.end() && canStandOn(u->bot())) {
+					u->bot()->previous(u);
+					P.push_back(u->bot());
+				}
+				if (std::find(Q.begin(), Q.end(), u->left()) == Q.end() && std::find(P.begin(), P.end(), u->left()) == P.end() && canStandOn(u->left())) {
+					u->left()->previous(u);
+					P.push_back(u->left());
+				}
+				Q.push_back(u);
+				P.erase(std::find(P.begin(), P.end(), u));
+
+				for (i = 0; i < P.size(); i++) {
+					if (P.at(i)->previous() == P.at(i)->bot())
+						P.at(i)->calculateEvaluation(target, Direction::UP);
+					else if (P.at(i)->previous() == P.at(i)->left())
+						P.at(i)->calculateEvaluation(target, Direction::RIGHT);
+					else if (P.at(i)->previous() == P.at(i)->top())
+						P.at(i)->calculateEvaluation(target, Direction::DOWN);
+					else if (P.at(i)->previous() == P.at(i)->right())
+						P.at(i)->calculateEvaluation(target, Direction::LEFT);
+				}
+
+				std::sort(P.begin(), P.end(), sortFunction);
+
+				u = P.at(P.size() - 1);
 			}
-		}
 
-		source = m_currentPosition;
-		target = m_targetZoneStack->at(m_targetZoneStack->size() - k);
-		u = m_currentPosition, v = NULL;
+			if (u == target) {
+				while (u) {
+					S.push_back(u);
+					u = u->previous();
+				}
 
-		while (Q.size() != 0) {
-			for (i = 0; i < Q.size(); i++)
-				Q.at(i)->calculateEvaluation(u, m_direction);
-			std::sort(Q.begin(), Q.end(), sortFunction);
-			v = Q.at(Q.size() - 1);
-			if (v != m_currentPosition)
-				v->previous(u);
-			u = v;
-			Q.erase(std::find(Q.begin(), Q.end(), u));
-
-			if (u == target)
-				break;
+				next_hop = S.at(S.size() - 2);
+				if (next_hop == m_currentPosition->top()) {
+					m_direction = Direction::UP;
+					forward(false);
+					return true;
+				}
+				else if (next_hop == m_currentPosition->right()) {
+					m_direction = Direction::RIGHT;
+					forward(false);
+					return true;
+				}
+				else if (next_hop == m_currentPosition->bot()) {
+					m_direction = Direction::DOWN;
+					forward(false);
+					return true;
+				}
+				else if (next_hop == m_currentPosition->left()) {
+					m_direction = Direction::LEFT;
+					forward(false);
+					return true;
+				}
+			}
+			k++;
 		}
-
-		if (u != target) { //No path was found
-			return false;
-		}
-
-		while (u) {
-			S.push_back(u);
-			u = u->previous();
-		}
-
-		next_hop = S.at(0);
-		if (next_hop == m_currentPosition->top()) {
-			m_direction = Direction::UP;
-			forward(false);
-			break;
-		}
-		else if (next_hop == m_currentPosition->right()) {
-			m_direction = Direction::RIGHT;
-			forward(false);
-			break;
-		}
-		else if (next_hop == m_currentPosition->bot()) {
-			m_direction = Direction::DOWN;
-			forward(false);
-			break;
-		}
-		else if (next_hop == m_currentPosition->left()) {
-			m_direction = Direction::LEFT;
-			forward(false);
-			break;
-		}
-		k++;
-	}
-	if (k > m_targetZoneStack->size()) {
-		m_targetNodeStack->erase(m_targetNodeStack->end() - 1);
+		j++;
 	}
 
 	return true;

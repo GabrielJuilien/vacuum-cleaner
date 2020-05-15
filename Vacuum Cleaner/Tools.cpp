@@ -61,13 +61,17 @@ void createGraph(void* input) {
 				buffer->bot(tmp_node);
 			}
 			buffer = tmp_node;
-			for (k = drawing->size() - 1; k >= 0; k--) {
+			for (k = 0; k < drawing->size(); k++) {
 				if (drawing->at(k)->x() <= tmp_node->x() && drawing->at(k)->x() + drawing->at(k)->w() >= tmp_node->x() && drawing->at(k)->y() <= tmp_node->y() && drawing->at(k)->y() + drawing->at(k)->h() >= tmp_node->y()) {
 					if (drawing->at(k)->draw()) {
 						tmp_node->type(NodeType::floor);
+						break;
 					}
-					break;
+					else
+						tmp_node->type(NodeType::null);
 				}
+				else
+					tmp_node->type(NodeType::null);
 			}
 		}
 	}
@@ -374,19 +378,15 @@ void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_grap
 	p_robot->getBackNodes();
 	p_robot->getLeftNodes();
 
-	p_robot->removeNode(p_robot->currentPosition());
+	if (p_robot->emptyNodeStack()) { //No more nodes to clear
+		*p_currentStep = Step::SIMULATION_END;
+		return;
+	}
+
 	p_robot->evaluateStack();
 	p_robot->sortStack();
-
-	p_robot->getZone();
-	p_robot->evaluateZoneStack();
-	p_robot->sortZoneStack();
 	
 	p_robot->dijkstra();
-
-	SDL_SetRenderDrawColor(p_renderer, 255, 0, 0, 0);
-	SDL_RenderDrawPoint(p_renderer, p_robot->getTargetNode()->graphNode()->x() / 2 + 280, p_robot->getTargetNode()->graphNode()->y() / 2 + 20);
-	SDL_RenderPresent(p_renderer);
 
 	simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
 }

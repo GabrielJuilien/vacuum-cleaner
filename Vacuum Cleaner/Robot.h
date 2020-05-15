@@ -52,6 +52,7 @@ public:
 	//Stack management
 	void addNode(RobotNode* p_graphNode);
 	void addNode(RobotNode* p_graphNode, int p_index);
+	bool find(RobotNode* p_node);
 	int stackLength();
 	void evaluateStack();
 	void sortStack();
@@ -61,7 +62,7 @@ public:
 	bool emptyNodeStack();
 
 	//Zone stack management
-	void getZone();
+	void getZone(int p_endOffset);
 	void evaluateZoneStack();
 	void sortZoneStack();
 	RobotNode* getTargetNode();
