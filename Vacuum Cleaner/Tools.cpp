@@ -384,12 +384,6 @@ void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_grap
 	
 	p_robot->dijkstra();
 
-	for (i = 0; i < 15; i++) {
-		for (j = 0; j < 15; j++) {
-			p_robot->currentPosition()->seekGraph(i - 7, j - 7)->graphNode()->state(NodeState::cleaned);
-		}
-	}
-
 	SDL_SetRenderDrawColor(p_renderer, 255, 0, 0, 0);
 	SDL_RenderDrawPoint(p_renderer, p_robot->getTargetNode()->graphNode()->x() / 2 + 280, p_robot->getTargetNode()->graphNode()->y() / 2 + 20);
 	SDL_RenderPresent(p_renderer);
@@ -407,7 +401,6 @@ void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphD
 
 	static SDL_Texture* robotTexture = SDL_CreateTextureFromSurface(p_renderer, IMG_Load("ressources/robot.png"));
 	static SDL_Rect destination = { 0, 0, 30, 30 };
-	static SDL_Point center = { 7, 7 };
 
 	tmp = (*(p_graphData->m_robot))->graph();
 	for (i = 0; i < 1000; i++) {
@@ -445,13 +438,13 @@ void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphD
 		SDL_RenderCopy(p_renderer, robotTexture, NULL, &destination);
 		break;
 	case Direction::RIGHT:
-		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 90, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 90, NULL, SDL_FLIP_NONE);
 		break;
 	case Direction::DOWN:
-		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 180, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 0, NULL, SDL_FLIP_VERTICAL);
 		break;
 	case Direction::LEFT:
-		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 270, &center, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(p_renderer, robotTexture, NULL, &destination, 270, NULL, SDL_FLIP_NONE);
 		break;
 	}
 

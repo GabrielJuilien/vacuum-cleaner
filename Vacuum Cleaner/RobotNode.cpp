@@ -168,29 +168,29 @@ float RobotNode::calculateEvaluation(RobotNode* p_currentPos, Direction p_robotD
 		if (x_evaluation == 0) {
 			if (y_evaluation < 0) {
 				if (p_robotDirection == Direction::DOWN)
-					m_evaluation = -y_evaluation;
+					m_evaluation = abs(y_evaluation);
 				else
-					m_evaluation = -y_evaluation + 2;
+					m_evaluation = abs(y_evaluation) + 2;
 			}
 			else {
 				if (p_robotDirection == Direction::UP)
-					m_evaluation = y_evaluation;
+					m_evaluation = abs(y_evaluation);
 				else
-					m_evaluation = y_evaluation + 2;
+					m_evaluation = abs(y_evaluation) + 2;
 			}
 		}
 		else if (y_evaluation == 0) {
-			if (x_evaluation > 0) {
+			if (x_evaluation < 0) {
 				if (p_robotDirection == Direction::RIGHT)
-					m_evaluation = x_evaluation;
+					m_evaluation = abs(x_evaluation);
 				else
-					m_evaluation = x_evaluation + 2;
+					m_evaluation = abs(x_evaluation) + 2;
 			}
 			else {
 				if (p_robotDirection == Direction::LEFT)
-					m_evaluation = -x_evaluation;
+					m_evaluation = abs(x_evaluation);
 				else
-					m_evaluation = -x_evaluation + 2;
+					m_evaluation = abs(x_evaluation) + 2;
 			}
 		}
 		else m_evaluation = abs(x_evaluation) + abs(y_evaluation) + 2;

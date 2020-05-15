@@ -117,6 +117,16 @@ bool Robot::forward(bool p_simulation) {
 			getFrontNodes();
 			getLeftNodes();
 			getRightNodes();
+
+			int i, j;
+			RobotNode* tmp = NULL;
+			for (i = 0; i < 15; i++) {
+				for (j = 0; j < 15; j++) {
+					tmp = currentPosition()->seekGraph(i - 7, j - 7);
+					tmp->graphNode()->state(NodeState::cleaned);
+					removeNode(tmp);
+				}
+			}
 		}
 		return true;
 	}
@@ -176,7 +186,7 @@ unsigned short Robot::getFrontState() {
 			break;
 		}
 
-		if (tmp->graphNode() && tmp->graphNode()->type() == NodeType::null) res += 1;
+		if (!tmp->graphNode() || tmp->graphNode()->type() == NodeType::null) res += 1;
 		res = res << 1;
 	}
 
@@ -280,7 +290,6 @@ bool Robot::canStandOn(RobotNode* p_position) {
 				return false;
 		}
 	}
-
 	return true;
 }
 
@@ -548,7 +557,7 @@ void Robot::getZone() {
 
 	m_targetZoneStack->clear();
 
-	RobotNode* target_node = m_targetNodeStack->at(0);
+	RobotNode* target_node = m_targetNodeStack->at(m_targetNodeStack->size() - 1);
 	RobotNode* tmp = NULL;
 	bool resetLoop = false;
 
@@ -586,72 +595,89 @@ void Robot::clearZoneStack() {
 
 //Path finding algorithm
 bool Robot::dijkstra() {
-	int i, j;
-	int stack_length = m_targetZoneStack->size();
+	int i, j, k = 1;
 	RobotNode* tmp = NULL;
 	RobotNode* next_col = m_graph;
 
 	std::vector<RobotNode*> Q;
-
-	for (i = 0; i < 1000; i++) {
-		tmp = next_col;
-		next_col = tmp->right();
-		for (j = 0; j < 700; j++) {
-			if (canStandOn(tmp)) {
-				Q.push_back(tmp);
-				tmp->previous(NULL);
-			}
-			tmp = tmp->bot();
-		}
-	}
-
-	RobotNode* source = m_currentPosition;
-	RobotNode* target = m_targetZoneStack->at(m_targetZoneStack->size() - 1);
-	RobotNode* u = m_currentPosition,* v = NULL;;
-
-	while (Q.size() != 0) {
-		for (i = 0; i < Q.size(); i++)
-			Q.at(i)->calculateEvaluation(u, m_direction);
-		std::sort(Q.begin(), Q.end(), sortFunction);
-		v = Q.at(Q.size() - 1);
-		if (v != m_currentPosition)
-			v->previous(u);
-		u = v;
-		Q.erase(std::find(Q.begin(), Q.end(), u));
-
-		if (u == target)
-			break;
-	}
-	
-	if (u != target) { //No path was found
-		return false;
-	}
-
 	std::vector<RobotNode*> S;
-	while (u) {
+
+	RobotNode* next_hop;
+	RobotNode* source, *target;
+	RobotNode* u, *v;
+
+	while (k <= m_targetZoneStack->size()) {
+		S.clear();
+		Q.clear();
+		next_col = m_graph;
+
+		for (i = 0; i < 1000; i++) {
+			tmp = next_col;
+			next_col = tmp->right();
+			for (j = 0; j < 700; j++) {
+				if (canStandOn(tmp)) {
+					Q.push_back(tmp);
+					tmp->previous(NULL);
+				}
+				tmp = tmp->bot();
+			}
+		}
+
+		source = m_currentPosition;
+		target = m_targetZoneStack->at(m_targetZoneStack->size() - k);
+		u = m_currentPosition, v = NULL;
+
+		while (Q.size() != 0) {
+			for (i = 0; i < Q.size(); i++)
+				Q.at(i)->calculateEvaluation(u, m_direction);
+			std::sort(Q.begin(), Q.end(), sortFunction);
+			v = Q.at(Q.size() - 1);
+			if (v != m_currentPosition)
+				v->previous(u);
+			u = v;
+			Q.erase(std::find(Q.begin(), Q.end(), u));
+
+			if (u == target)
+				break;
+		}
+
+		if (u != target) { //No path was found
+			return false;
+		}
+
+		while (u) {
 			S.push_back(u);
 			u = u->previous();
+		}
+
+		next_hop = S.at(0);
+		if (next_hop == m_currentPosition->top()) {
+			m_direction = Direction::UP;
+			forward(false);
+			break;
+		}
+		else if (next_hop == m_currentPosition->right()) {
+			m_direction = Direction::RIGHT;
+			forward(false);
+			break;
+		}
+		else if (next_hop == m_currentPosition->bot()) {
+			m_direction = Direction::DOWN;
+			forward(false);
+			break;
+		}
+		else if (next_hop == m_currentPosition->left()) {
+			m_direction = Direction::LEFT;
+			forward(false);
+			break;
+		}
+		k++;
+	}
+	if (k > m_targetZoneStack->size()) {
+		m_targetNodeStack->erase(m_targetNodeStack->end() - 1);
 	}
 
-	RobotNode* next_hop = S.at(0);
-	if (next_hop == m_currentPosition->top()) {
-		m_direction = Direction::UP;
-		return forward(false);
-	}
-	else if (next_hop == m_currentPosition->right()) {
-		m_direction = Direction::RIGHT;
-		return forward(false);
-	}
-	else if (next_hop == m_currentPosition->bot()) {
-		m_direction = Direction::DOWN;
-		return forward(false);
-	}
-	else if (next_hop == m_currentPosition->left()) {
-		m_direction = Direction::LEFT;
-		return forward(false);
-	}
-	else forward(false);
-	
+	return true;
 }
 
 //Destroyer
