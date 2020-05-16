@@ -69,7 +69,7 @@ public:
 	void clearZoneStack();
 
 	//Path finding
-	bool dijkstra();
+	bool a_star();
 
 	//Destroyer
 	~Robot();

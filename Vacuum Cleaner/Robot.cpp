@@ -117,6 +117,7 @@ bool Robot::forward(bool p_simulation) {
 			getFrontNodes();
 			getLeftNodes();
 			getRightNodes();
+			getBackNodes();
 
 			int i, j;
 			RobotNode* tmp = NULL;
@@ -599,7 +600,7 @@ void Robot::clearZoneStack() {
 
 
 //Path finding algorithm
-bool Robot::dijkstra() {
+bool Robot::a_star() {
 	int i, j = 1, k = 1;
 	RobotNode* tmp = NULL;
 
@@ -610,6 +611,9 @@ bool Robot::dijkstra() {
 	RobotNode* next_hop;
 	RobotNode* source = NULL, *target = NULL;
 	RobotNode* u = NULL, *v = NULL;
+
+	evaluateStack();
+	sortStack();
 
 	while (j <= m_targetNodeStack->size()) {
 

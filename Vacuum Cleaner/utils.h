@@ -11,6 +11,7 @@
 #include <vector>
 #include <string>
 #include <math.h>
+#include <fstream>
 
 #include <stdlib.h>
 #include <crtdbg.h>

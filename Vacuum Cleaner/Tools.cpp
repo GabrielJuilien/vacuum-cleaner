@@ -1,5 +1,8 @@
 #include "Tools.h"
 
+std::vector<Direction> path_dump;
+std::ofstream path_output_file;
+
 int switchToolToDraw(void* input) {
 	Tool* currentTool = static_cast<Tool*>(input);
 	*currentTool = Tool::DRAW;
@@ -61,14 +64,13 @@ void createGraph(void* input) {
 				buffer->bot(tmp_node);
 			}
 			buffer = tmp_node;
-			for (k = 0; k < drawing->size(); k++) {
+			for (k = drawing->size() - 1; k >= 0 ; k--) {
 				if (drawing->at(k)->x() <= tmp_node->x() && drawing->at(k)->x() + drawing->at(k)->w() >= tmp_node->x() && drawing->at(k)->y() <= tmp_node->y() && drawing->at(k)->y() + drawing->at(k)->h() >= tmp_node->y()) {
-					if (drawing->at(k)->draw()) {
+					if (drawing->at(k)->draw() == true)
 						tmp_node->type(NodeType::floor);
-						break;
-					}
 					else
 						tmp_node->type(NodeType::null);
+					break;
 				}
 				else
 					tmp_node->type(NodeType::null);
@@ -105,6 +107,11 @@ int switchToolToCGraph(void* input) {
 		}
 	}
 
+	(*(graphData->m_robot))->getFrontNodes();
+	(*(graphData->m_robot))->getRightNodes();
+	(*(graphData->m_robot))->getBackNodes();
+	(*(graphData->m_robot))->getLeftNodes();
+
 	return 0;
 }
 
@@ -131,7 +138,7 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 					if (AddRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
 					else if (RmvRectangleButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
 					else if (SetRobotPosButton->trigger(x_mousePos, y_mousePos, currentTool)) break;
-					else if (GraphButton->trigger(x_mousePos, y_mousePos, p_graphData)) {
+					else if (p_graphData->m_startingPoint.x != 0 && p_graphData->m_startingPoint.y != 0 && GraphButton->trigger(x_mousePos, y_mousePos, p_graphData)) {
 
 						p_view->discardBuffer();
 
@@ -320,8 +327,10 @@ void handler(SDL_Renderer* p_renderer, Step* currentStep, Button* AddRectangleBu
 			}
 		}
 	}
-
-	drawPhaseRender(p_renderer, currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, SetRobotPosButton, FillButton);
+	if (p_graphData->m_startingPoint.x != 0 && p_graphData->m_startingPoint.y != 0)
+		drawPhaseRender(p_renderer, currentStep, p_view, AddRectangleButton, RmvRectangleButton, GraphButton, SetRobotPosButton, FillButton);
+	else
+		drawPhaseRender(p_renderer, currentStep, p_view, AddRectangleButton, RmvRectangleButton, NULL, SetRobotPosButton, FillButton);
 }
 
 void drawPhaseRender(SDL_Renderer* p_renderer, Step* currentStep, View* view, Button* AddRectangleButton, Button* RmvRectangleButton, Button* GraphRectangleButton, Button* SetRobotPosButton, Button* FillButton) {
@@ -336,9 +345,9 @@ void drawPhaseRender(SDL_Renderer* p_renderer, Step* currentStep, View* view, Bu
 		if (view) view->render(p_renderer, 0, 0);
 		if (AddRectangleButton) AddRectangleButton->render();
 		if (RmvRectangleButton) RmvRectangleButton->render();
+		if (FillButton) FillButton->render();
 		if (GraphRectangleButton) GraphRectangleButton->render();
 		if (SetRobotPosButton) SetRobotPosButton->render();
-		if (FillButton) FillButton->render();
 		SDL_RenderPresent(p_renderer);
 		lastFrame += 1000 / FRAMERATE;
 	}
@@ -373,22 +382,16 @@ void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_grap
 		}
 	}
 
-	p_robot->getFrontNodes();
-	p_robot->getRightNodes();
-	p_robot->getBackNodes();
-	p_robot->getLeftNodes();
-
 	if (p_robot->emptyNodeStack()) { //No more nodes to clear
 		*p_currentStep = Step::SIMULATION_END;
 		return;
 	}
-
-	p_robot->evaluateStack();
-	p_robot->sortStack();
 	
-	p_robot->dijkstra();
+p_robot->a_star();
 
-	simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
+path_dump.push_back(p_robot->direction());
+
+simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
 }
 
 void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData) {
@@ -396,7 +399,7 @@ void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphD
 	SDL_RenderClear(p_renderer);
 
 	int i, j;
- 	RobotNode* tmp = NULL;
+	RobotNode* tmp = NULL;
 	RobotNode* tmp2 = NULL;
 
 	static SDL_Texture* robotTexture = SDL_CreateTextureFromSurface(p_renderer, IMG_Load("ressources/robot.png"));
@@ -449,6 +452,104 @@ void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphD
 	}
 
 	SDL_RenderPresent(p_renderer);
+}
+
+void post_simulation(SDL_Renderer* p_renderer, Step* p_currentStep) {
+	static Button* exportGraph = new Button(p_renderer, "ressources/export.png", "Export path", { 0, 255, 0, 0 }, 35, { 0, 0, 0, 0 }, { 15, 62, 0, 0 }, { 250, 0, 120, 120 }, { 240, 400, 400, 160 }, export_graph);
+	static Button* quitProgram = new Button(p_renderer, "ressources/quit.png", "Quit", { 255, 50, 50, 0 }, 35, { 0, 0, 0, 0 }, { 15, 62, 0, 0 }, { 200, 0, 120, 120 }, { 640, 400, 400, 160 }, quit_program);
+
+	static std::string userPath;
+	static std::string error;
+
+	int x, y;
+	SDL_GetMouseState(&x, &y);
+
+	SDL_Event e;
+	while (SDL_PollEvent(&e)) {
+		switch (e.type) {
+		case SDL_QUIT:
+			*p_currentStep = Step::QUIT;
+			return;
+			break;
+
+		case SDL_TEXTINPUT:
+			userPath += e.text.text;
+			break;
+
+		case SDL_KEYDOWN:
+			switch (e.key.keysym.sym) {
+			case SDLK_BACKSPACE:
+				if (userPath.size() > 0)
+					userPath.pop_back();
+			}
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			try {
+				if (!exportGraph->trigger(x, y, &userPath));
+				else
+					error = "File exported at " + userPath;
+				if (!quitProgram->trigger(x, y, p_currentStep));
+			}
+			catch (std::string Exception) {
+				error = Exception;
+			}
+		}
+	}
+
+	post_simulation_render(p_renderer, exportGraph, quitProgram, userPath, error);
+}
+
+void post_simulation_render(SDL_Renderer* p_renderer, Button* exportGraph, Button* quitProgram, std::string userPath, std::string error) {
+	static int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
+	static Text* text = new Text("Please type the path you want to save the path to:", p_renderer, { 0, 0, 0, 0 }, 50, 240, 250);
+	static Text* userText = new Text(userPath, p_renderer, { 0, 0, 0, 0 }, 25, 240, 300);
+	static Text* errorText = new Text(error, p_renderer, { 0, 0, 0, 0 }, 25, 240, 625);
+
+	currentFrame = SDL_GetTicks();
+	userText->text(userPath);
+	errorText->text(error);
+
+	while (currentFrame - lastFrame > 1000 / FRAMERATE) {
+		SDL_RenderClear(p_renderer);
+
+		text->render(0, 0);
+		userText->render(0, 0);
+		exportGraph->render();
+		quitProgram->render();
+		errorText->render(0, 0);
+
+		SDL_RenderPresent(p_renderer);
+		lastFrame += 1000 / FRAMERATE;
+	}
+
+	//Idle wait
+	std::this_thread::sleep_for(std::chrono::milliseconds(5));
+}
+
+int export_graph(void* input) {
+	try {
+		path_output_file.open(static_cast<std::string*>(input)->c_str());
+	}
+	catch (std::ostream::failure Exception) {
+		throw std::string("Couldn't open file.");
+	}
+
+	if (!path_output_file.is_open()) {
+		throw std::string("Couldn't open file.");
+	}
+
+	int dump_length = path_dump.size();
+	for (int i = 0; i < dump_length; i++) {
+		path_output_file << std::to_string(static_cast<int>(path_dump.at(i))) << std::endl;
+	}
+
+	path_output_file.close();
+	return 0;
+}
+
+int quit_program(void* input) {
+	*(static_cast<Step*>(input)) = Step::QUIT;
+	return 0;
 }
 
 void deleteGraph(GraphNode* p_graph) {

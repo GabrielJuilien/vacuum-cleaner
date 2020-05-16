@@ -5,6 +5,8 @@
 #include "View.h"
 #include "GraphNode.h"
 
+
+
 int main(int argc, char** argv)
 {
 	SDL_Window* window;
@@ -24,7 +26,7 @@ int main(int argc, char** argv)
 
 	GraphData* graphData = NULL;
 
-	int i = 0, j;
+	int i, j;
 
 	int lastFrame = SDL_GetTicks(), currentFrame = SDL_GetTicks();
 
@@ -44,6 +46,7 @@ int main(int argc, char** argv)
 			return EXIT_FAILURE;
 		}
 	}
+	
 
 	window = SDL_CreateWindow("Vacuum Cleaner Planner", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);
 
@@ -63,7 +66,7 @@ int main(int argc, char** argv)
 		SetRobotPosButton = new Button(renderer, "ressources/robot_icon.png", "Place robot", { 0, 200, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 200, 260, 100 }, switchToolToPlaceRobot);
 		GraphRectangleButton = new Button(renderer, "ressources/create_graph.png", "Start simulation", { 0, 0, 200, 0 }, 24, { 0, 0, 0, 0 }, { 82, 38, 0, 0 }, { 20, 20, 64, 64 }, { 0, 300, 260, 100 }, switchToolToCGraph);
 
-		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 400, 260, 420 }, switchToolToNone);
+		FillButton = new Button(renderer, "", "", { 128, 128, 128, 0 }, 24, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 300, 260, 420 }, switchToolToNone);
 		
 		view = new View(renderer, { 0, 0, 1020, 20, false }, { 0, 0, 20, 720, false }, { 20, 20, 1000, 700, false });
 		view->x(260);
@@ -91,8 +94,11 @@ int main(int argc, char** argv)
 	}
 
 	while (currentStep == Step::SIMULATION_RENDERING) {
-		i++;
 		simulation(renderer, &currentStep, graphData);
+	}
+
+	while (currentStep == Step::SIMULATION_END) {
+		post_simulation(renderer, &currentStep);
 	}
 
 
