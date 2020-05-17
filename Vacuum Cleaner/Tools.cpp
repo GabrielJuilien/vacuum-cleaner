@@ -63,6 +63,7 @@ void createGraph(void* input) {
 				tmp_node->top(buffer);
 				buffer->bot(tmp_node);
 			}
+
 			buffer = tmp_node;
 			for (k = drawing->size() - 1; k >= 0 ; k--) {
 				if (drawing->at(k)->x() <= tmp_node->x() && drawing->at(k)->x() + drawing->at(k)->w() >= tmp_node->x() && drawing->at(k)->y() <= tmp_node->y() && drawing->at(k)->y() + drawing->at(k)->h() >= tmp_node->y()) {
@@ -361,7 +362,7 @@ void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_grap
 	int i, j;
 
 	static Robot* p_robot = *(p_graphData->m_robot);
-	
+	static bool quit_lock = false;
 	static SDL_Event e;
 	static bool update_view = true;
 
@@ -382,16 +383,14 @@ void simulation(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_grap
 		}
 	}
 
-	if (p_robot->emptyNodeStack()) { //No more nodes to clear
+	if (p_robot->emptyNodeStack() || p_robot->a_star() == false) { //No more nodes to clear
 		*p_currentStep = Step::SIMULATION_END;
 		return;
 	}
 	
-p_robot->a_star();
+	path_dump.push_back(p_robot->direction());
 
-path_dump.push_back(p_robot->direction());
-
-simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
+	simulationPhaseRender(p_renderer, p_currentStep, p_graphData);
 }
 
 void simulationPhaseRender(SDL_Renderer* p_renderer, Step* p_currentStep, GraphData* p_graphData) {

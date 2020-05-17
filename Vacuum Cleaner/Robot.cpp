@@ -702,7 +702,7 @@ bool Robot::a_star() {
 		j++;
 	}
 
-	return true;
+	return false;
 }
 
 //Destroyer
